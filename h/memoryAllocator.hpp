@@ -19,9 +19,10 @@ public:
 
 private:
     MemoryAllocator() {}
+    static void tryToJoin(MemSeg *seg);
     static MemoryAllocator* instance;
     static MemSeg* freeSegHead = nullptr;
-    static MemSeg* takenSegHead = nullptr;
+    static MemSeg* usedSegHead = nullptr;
 };
 
 #endif
