@@ -45,6 +45,7 @@ void *MemoryAllocator::mem_alloc(size_t size) {
         }
 
         /// update used memory list
+        /// insert segment after tmp2
         MemSeg* tmp2 = 0;
         if (usedSegHead && (char*) tmp > (char*) usedSegHead)
             for (tmp2 = usedSegHead; tmp2 -> next && (char*) tmp > (char*) (tmp2 -> next)); tmp2 = tmp2 -> next);
@@ -76,10 +77,12 @@ int MemoryAllocator::mem_free(void *addr) {
     if (!found) return -3;
     removeNode(segToFree, segToFree -> next, false);
     /// update free memory list
+    /// empty list case
     if (!freeSegHead) {
         freeSegHead = segToFree;
         segToFree -> prev = segToFree -> next = nullptr;
     }
+    /// freed segment shold be places first
     else if ((char*) addr < (char*) freeSegHead) {
         segToFree -> prev = nullptr;
         segToFree -> next = freeSegHead;
@@ -87,6 +90,7 @@ int MemoryAllocator::mem_free(void *addr) {
         freeSegHead = segToFree;
         tryToJoin(segToFree);
     }
+    /// iterate list to find where to insert
     else {
         MemSeg *tmp;
         for (tmp = freeSegHead; tmp -> next && (char*) (tmp -> next) < (char*) segToFree; tmp = tmp -> next);
@@ -100,6 +104,7 @@ int MemoryAllocator::mem_free(void *addr) {
     return 0;
 }
 
+/// join free segment with next if possible
 void MemoryAllocator::tryToJoin(MemoryAllocator::MemSeg *seg) {
     if (seg -> next && (char*) seg + sizeof(MemSeg) + seg -> size == (char*) seg -> next) {
         seg -> size += sizeof(MemSeg) + seg -> next -> size;
