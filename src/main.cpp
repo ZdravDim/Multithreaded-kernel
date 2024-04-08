@@ -1,5 +1,5 @@
 #include "../lib/console.h"
-#include "../h/memoryAllocator.h"
+#include "../h/memory_allocator.hpp"
 
 int main() {
     __putc('?');
