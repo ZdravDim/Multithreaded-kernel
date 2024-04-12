@@ -1,6 +1,7 @@
 #include "../lib/hw.h"
 #include "../h/syscall_c.hpp"
 #include "../h/memory_allocator.hpp"
+#include "../h/risc-v.hpp"
 
 extern "C" void interruptRoutine() {
     /// read values from registers
@@ -12,24 +13,24 @@ extern "C" void interruptRoutine() {
     __asm__ volatile("mv %0, a4" : "=r"(a4));
 
     /// illegal instruction
-    if (r_scause() == 2) {
+    if (RiscV::read_scause() == (uint64) 2) {
         uint64 val = 1;
-        __asm__ volatile ("csrw a0, %0" : : "r"(val));
+        __asm__ volatile("mv a0, %0" : : "r"(val));
         return;
     }
 
     switch(syscall_code) {
         case MEM_ALLOC:
-            MemoryAllocator::mem_alloc((size) a1);
+            MemoryAllocator::mem_alloc((size_t) a1);
             break;
         case MEM_FREE:
             MemoryAllocator::mem_free((void *) a1);
             break;
         case THREAD_CREATE:
-//            TCB::_thread_create((thread_t *) arg1, (run_t) arg2, (void *) arg3, (void *) arg4);
+            TCB::thread_create((thread_t *) a1, (void (*)(void *)) a2, (void *) a3, (void *) a4);
             break;
         case THREAD_EXIT:
-//            TCB::_thread_exit();
+            TCB::thread_exit();
             break;
         case THREAD_DISPATCH:
 //            TCB::_thread_dispatch();
@@ -37,15 +38,15 @@ extern "C" void interruptRoutine() {
         case THREAD_JOIN:
 //            TCB::_thread_join((thread_t) arg1);
             break;
-        case THREAD_JOIN_TIME:
-//            TCB::_thread_join((thread_t) arg1, (time_t) arg2);
-            break;
-        case THREAD_FORK:
-//            TCB::_fork();
-            break;
-        case THREAD_KILL:
-//            TCB::_kill((thread_t) arg1);
-            break;
+//        case THREAD_JOIN_TIME:
+////            TCB::_thread_join((thread_t) arg1, (time_t) arg2);
+//            break;
+//        case THREAD_FORK:
+////            TCB::_fork();
+//            break;
+//        case THREAD_KILL:
+////            TCB::_kill((thread_t) arg1);
+//            break;
         case SEM_OPEN:
 //            Sem::_sem_open((sem_t *) arg1, arg2);
             break;
@@ -58,11 +59,11 @@ extern "C" void interruptRoutine() {
         case SEM_SIGNAL:
 //            Sem::_sem_signal((sem_t) arg1);
             break;
-        case TIME_SLEEP:
-//            Cradle::_time_sleep((time_t) arg1);
-            break;
-        case THREAD_WAKE:
-//            Cradle::_thread_wake((thread_t) arg1);
+//        case TIME_SLEEP:
+////            Cradle::_time_sleep((time_t) arg1);
+//            break;
+//        case THREAD_WAKE:
+////            Cradle::_thread_wake((thread_t) arg1);
         case GETC:
 //            IO::_getc();
             break;

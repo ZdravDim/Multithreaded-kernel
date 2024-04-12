@@ -3,12 +3,12 @@
 
 #include "syscall_c.hpp"
 
-void* ::operator new (size_t);
-void ::operator delete (void*);
+void* operator new (size_t);
+void operator delete (void *);
 
 class Thread {
 public:
-    Thread (void (*body)(void*), void* arg);
+    Thread (void (*body)(void *), void* arg);
     virtual ~Thread ();
     int start ();
     static void dispatch ();
