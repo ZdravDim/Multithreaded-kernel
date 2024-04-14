@@ -7,8 +7,8 @@
 
 class Scheduler {
 public:
-    static void initialize();
     static void put(TCB* thread);
+    static void put_to_sleep(TCB* thread, time_t time);
     static TCB* get();
 
     void* operator new(size_t size);
@@ -18,7 +18,8 @@ private:
     Scheduler() = default;
     Scheduler(Scheduler &) = delete;
 
-    static ThreadList* ready_threads;
+    static TCB* head_ready, *tail_ready;
+    static TCB* head_sleeping;
 };
 
 #endif

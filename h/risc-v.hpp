@@ -3,10 +3,11 @@
 
 #include "../lib/hw.h"
 
-extern "C" void interruptHandler();
-
 class RiscV {
 public:
+    static void push_registers();
+    static void pop_registers();
+
     static uint64 read_scause();
     static void write_scause(uint64 val);
     static uint64 read_sepc();
