@@ -1,4 +1,5 @@
 #include "../h/syscall_c.hpp"
+#include "../h/memory_allocator.hpp"
 #include "../lib/hw.h"
 
 void syscall(uint64 syscall_code, uint64 a1 = 0, uint64 a2 = 0, uint64 a3 = 0, uint64 a4 = 0) {
@@ -7,6 +8,7 @@ void syscall(uint64 syscall_code, uint64 a1 = 0, uint64 a2 = 0, uint64 a3 = 0, u
 
 void* mem_alloc (size_t size) {
     if (size == 0) return nullptr;
+    size = (size + sizeof(MemoryAllocator::MemSeg) + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE * MEM_BLOCK_SIZE;
     void volatile *addr;
     syscall(MEM_ALLOC, size);
     __asm__ volatile ("mv %0, a0" : "=r"(addr));

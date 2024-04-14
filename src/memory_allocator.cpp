@@ -28,10 +28,11 @@ void MemoryAllocator::removeNode(MemSeg *toRemove, MemSeg *nextSeg, bool newIsCr
     if (toRemove -> next) toRemove -> next -> prev = (newIsCreated) ? toRemove -> prev : nextSeg;
 }
 
-/// allocate `size` bytes, but round up to MEM_BLOCK_SIZE
+/// allocate `size` bytes, rounded up to MEM_BLOCK_SIZE
 void *MemoryAllocator::mem_alloc(size_t size) {
     if (size <= 0) return nullptr;
-    size_t bytesToAllocate = (size + sizeof(MemSeg) + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE * MEM_BLOCK_SIZE;
+//    size_t bytesToAllocate = (size + sizeof(MemSeg) + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE * MEM_BLOCK_SIZE;
+    size_t bytesToAllocate = size;
     MemSeg *tmp = freeSegHead;
     while (tmp) {
         if (tmp -> size < bytesToAllocate) {

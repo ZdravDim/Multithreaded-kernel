@@ -30,3 +30,11 @@ void TCB::thread_exit() {
 void TCB::wrapper_function() {
     //...
 }
+
+void TCB::yield(TCB *old_running, TCB *new_running) {
+    //...
+}
+
+void TCB::dispatch() {
+    //...
+}
