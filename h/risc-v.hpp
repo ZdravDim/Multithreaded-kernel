@@ -3,6 +3,8 @@
 
 #include "../lib/hw.h"
 
+extern "C" void interrupt_routine();
+
 class RiscV {
 public:
     static void push_registers();

@@ -15,8 +15,8 @@ class TCB {
 public:
     enum Status { RUNNABLE, SLEEPING, BLOCKED, JOINED, FINISHED };
 
-    TCB(void (*function_body)(void*), void *arg, void *stack_space, Context context);
-    static int thread_create(thread_t *handle, void(*start_routine)(void *), void *arg, void *stack_space);
+    TCB(void (*function_body)(void*), void *arg, void *stack, Context context);
+    static int thread_create(thread_t *handle, void(*start_routine)(void *), void *arg, void *stack_begin_address);
     static void wrapper_function();
     static void thread_exit();
     static void dispatch();
@@ -29,9 +29,10 @@ public:
     void start();
 
     void set_status(Status status);
-    void set_next_ready(TCB* next);
     time_t get_time_to_sleep();
     void set_time_to_sleep(time_t time);
+    TCB* get_next_ready();
+    void set_next_ready(TCB* next);
     TCB* get_next_sleeping();
     void set_next_sleeping(TCB* next);
 

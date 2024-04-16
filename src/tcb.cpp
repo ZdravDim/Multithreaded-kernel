@@ -6,43 +6,42 @@
 int TCB::cnt = 0;
 TCB* TCB::running = nullptr;
 
-int TCB::thread_create(thread_t *handle, void(*start_routine)(void *), void *arg, void *stack_space) {
+int TCB::thread_create(thread_t *handle, void(*start_routine)(void *), void *arg, void *stack_begin_address) {
     Context context = {
             (uint64) wrapper_function,
-            (uint64) stack_space + DEFAULT_STACK_SIZE - 1
+            (uint64) (stack_begin_address ? (uint64) stack_begin_address + DEFAULT_STACK_SIZE - 1 : 0) /// stack rises to lower locations
     };
-    *handle = new TCB(start_routine, arg, stack_space, context);
-//    if (start_routine) Scheduler::put(this);
-    return (*handle) -> id;
+    *handle = new TCB(start_routine, arg, stack_begin_address, context);
+    return (*handle) -> id; /// return 0?
 }
 
-TCB::TCB(void (*function_body)(void *), void *arg, void *stack_space, Context context) {
+TCB::TCB(void (*function_body)(void *), void *arg, void *stack, Context context) {
     id = cnt++;
     status = RUNNABLE;
     this -> context = context;
     this -> function_body = function_body;
     this -> arg = arg;
-    stack = MemoryAllocator::mem_alloc(DEFAULT_STACK_SIZE);
+    this -> stack = stack;
     time_slice = DEFAULT_TIME_SLICE;
-    next_ready = nullptr;
     time_to_sleep = 0;
+    next_ready = nullptr;
     next_sleeping = nullptr;
     if (function_body) Scheduler::put(this);
 }
 
 void TCB::thread_exit() {
     running -> set_status(Status::FINISHED);
-    //...
     dispatch();
 }
 
 void TCB::wrapper_function() {
-    //...
+    running -> function_body(running -> arg);
+    thread_exit();
 }
 
 void TCB::yield(TCB *old_running, TCB *new_running) {
     RiscV::push_registers();
-    context_switch(old_running -> context, new_running -> context);
+//    context_switch(&old_running -> context, &new_running -> context);
     RiscV::pop_registers();
 }
 
@@ -50,7 +49,11 @@ void TCB::dispatch() {
     TCB* old = running;
     if (old -> status != FINISHED && old -> status != BLOCKED) Scheduler::put(old);
     running = Scheduler::get();
-    context_switch(&old -> context, &running -> context);
+//    context_switch(&old -> context, &running -> context);
+}
+
+TCB *TCB::get_next_ready() {
+    return next_ready;
 }
 
 void TCB::set_next_ready(TCB *next) {

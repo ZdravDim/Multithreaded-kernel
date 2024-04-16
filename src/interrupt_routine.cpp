@@ -3,7 +3,7 @@
 #include "../h/memory_allocator.hpp"
 #include "../h/risc-v.hpp"
 
-extern "C" void interruptRoutine() {
+extern "C" void interrupt_routine() {
     /// read values from registers
     uint64 syscall_code, a1, a2, a3, a4;
     __asm__ volatile("mv %0, a0" : "=r"(syscall_code));
