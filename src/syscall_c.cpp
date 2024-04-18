@@ -1,4 +1,4 @@
-#include "../h/syscall_c.hpp"
+#include "../h/syscall_c.h"
 #include "../h/memory_allocator.hpp"
 
 void syscall(uint64 syscall_code, uint64 a1 = 0, uint64 a2 = 0, uint64 a3 = 0, uint64 a4 = 0) {
@@ -7,7 +7,7 @@ void syscall(uint64 syscall_code, uint64 a1 = 0, uint64 a2 = 0, uint64 a3 = 0, u
 
 void* mem_alloc (size_t size) {
     if (size == 0) return nullptr;
-    size = (size + sizeof(MemoryAllocator::MemSeg) + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE * MEM_BLOCK_SIZE;
+    size = MemoryAllocator::get_number_of_blocks(size);
     void volatile *addr;
     syscall(MEM_ALLOC, size);
     __asm__ volatile ("mv %0, a0" : "=r"(addr));
@@ -36,3 +36,25 @@ int thread_exit () {
     __asm__ volatile("mv %0, a0" : "=r"(status));
     return status;
 }
+
+void thread_dispatch () {
+    syscall(THREAD_DISPATCH);
+}
+
+int sem_open (sem_t* handle, unsigned init) { return 0; }
+
+int sem_close (sem_t handle) { return 0; }
+
+int sem_wait (sem_t id) { return 0; }
+
+int sem_signal (sem_t id) { return 0; }
+
+int sem_timedwait(sem_t id, time_t timeout) { return 0; }
+
+int sem_trywait(sem_t id) { return 0; }
+
+int time_sleep (time_t) { return 0; }
+
+char getc () { return __getc(); }
+
+void putc (char c) { __putc(c); }

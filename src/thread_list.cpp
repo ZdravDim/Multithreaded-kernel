@@ -26,7 +26,7 @@ TCB *ThreadList::remove_first() {
 }
 
 void *ThreadList::Node::operator new(size_t size) {
-    return MemoryAllocator::mem_alloc(size);
+    return MemoryAllocator::mem_alloc(MemoryAllocator::get_number_of_blocks(size));
 }
 
 void ThreadList::Node::operator delete(void *addr) {

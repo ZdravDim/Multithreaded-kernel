@@ -41,7 +41,7 @@ void TCB::wrapper_function() {
 
 void TCB::yield(TCB *old_running, TCB *new_running) {
     RiscV::push_registers();
-//    context_switch(&old_running -> context, &new_running -> context);
+    if (old_running != new_running) context_switch(&old_running -> context, &new_running -> context);
     RiscV::pop_registers();
 }
 
@@ -49,7 +49,7 @@ void TCB::dispatch() {
     TCB* old = running;
     if (old -> status != FINISHED && old -> status != BLOCKED) Scheduler::put(old);
     running = Scheduler::get();
-//    context_switch(&old -> context, &running -> context);
+    if (old != running) context_switch(&old -> context, &running -> context);
 }
 
 TCB *TCB::get_next_ready() {
@@ -86,7 +86,7 @@ void TCB::start() {
 }
 
 void *TCB::operator new(size_t size) {
-    return MemoryAllocator::mem_alloc(size);
+    return MemoryAllocator::mem_alloc(MemoryAllocator::get_number_of_blocks(size));
 }
 
 void TCB::operator delete(void *addr) {

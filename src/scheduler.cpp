@@ -21,7 +21,7 @@ TCB* Scheduler::get() {
 }
 
 void *Scheduler::operator new(size_t size) {
-    return MemoryAllocator::mem_alloc(size);
+    return MemoryAllocator::mem_alloc(MemoryAllocator::get_number_of_blocks(size));
 }
 
 void Scheduler::operator delete(void *addr) {

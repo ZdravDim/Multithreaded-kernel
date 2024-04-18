@@ -2,13 +2,15 @@
 #define riscv
 
 #include "../lib/hw.h"
-
-extern "C" void interrupt_routine();
+#include "../h/syscall_c.h"
+#include "../h/memory_allocator.hpp"
 
 class RiscV {
 public:
     static void push_registers();
     static void pop_registers();
+
+    static void handle_supervisor_trap();
 
     static uint64 read_scause();
     static void write_scause(uint64 val);

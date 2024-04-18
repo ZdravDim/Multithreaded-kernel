@@ -6,13 +6,13 @@
 class TCB;
 typedef TCB* thread_t;
 
-struct Context {
-    uint64 ra;
-    uint64 sp;
-};
-
 class TCB {
 public:
+    struct Context {
+        uint64 ra;
+        uint64 sp;
+    };
+
     enum Status { RUNNABLE, SLEEPING, BLOCKED, JOINED, FINISHED };
 
     TCB(void (*function_body)(void*), void *arg, void *stack, Context context);
