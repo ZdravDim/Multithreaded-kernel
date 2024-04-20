@@ -1,8 +1,10 @@
-#ifndef _syscall_c
-#define _syscall_c
+#ifndef syscall_c
+#define syscall_c
 
 #include "../lib/hw.h"
 #include "tcb.hpp"
+#include "memory_allocator.hpp"
+#include "semaphore.hpp"
 
 enum SYSCALL_CODES {
     MEM_ALLOC = 0x01,

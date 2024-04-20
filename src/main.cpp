@@ -21,6 +21,8 @@ void userMain();
 int main() {
     /// set interrupt routine handler
     RiscV::write_stvec((uint64) &RiscV::handle_supervisor_trap);
+    /// ???
+    RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
     /// initialize Memory Allocator
     MemoryAllocator::initialize();
     /// Test Memory Allocation

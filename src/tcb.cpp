@@ -5,6 +5,7 @@
 
 int TCB::cnt = 0;
 TCB* TCB::running = nullptr;
+time_t TCB::time_slice_counter = 0;
 
 int TCB::thread_create(thread_t *handle, void(*start_routine)(void *), void *arg, void *stack_begin_address) {
     Context context = {
@@ -35,6 +36,7 @@ void TCB::thread_exit() {
 }
 
 void TCB::wrapper_function() {
+    RiscV::popSppSpie();
     running -> function_body(running -> arg);
     thread_exit();
 }
@@ -91,4 +93,8 @@ void *TCB::operator new(size_t size) {
 
 void TCB::operator delete(void *addr) {
     MemoryAllocator::mem_free(addr);
+}
+
+time_t TCB::get_time_slice() {
+    return time_slice;
 }

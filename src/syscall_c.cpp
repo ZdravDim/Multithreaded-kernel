@@ -1,5 +1,4 @@
 #include "../h/syscall_c.h"
-#include "../h/memory_allocator.hpp"
 
 void syscall(uint64 syscall_code, uint64 a1 = 0, uint64 a2 = 0, uint64 a3 = 0, uint64 a4 = 0) {
     __asm__ volatile("ecall");

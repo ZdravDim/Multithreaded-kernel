@@ -7,6 +7,9 @@ class TCB;
 typedef TCB* thread_t;
 
 class TCB {
+
+    friend class RiscV;
+
 public:
     struct Context {
         uint64 ra;
@@ -35,6 +38,7 @@ public:
     void set_next_ready(TCB* next);
     TCB* get_next_sleeping();
     void set_next_sleeping(TCB* next);
+    time_t get_time_slice();
 
 private:
     static TCB* running; /// running thread
@@ -45,6 +49,7 @@ private:
     void (*function_body)(void*); /// thread function to execute
     void* arg; /// function arguments
     void* stack; /// thread stack
+    static time_t time_slice_counter; /// ?
     time_t time_slice; /// time given for executing
     TCB* next_ready; /// Scheduler ready list
     time_t time_to_sleep; /// not actual time, but time to sleep when this TCB becomes first in the list

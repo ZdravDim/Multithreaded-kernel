@@ -1,5 +1,10 @@
 #include "../h/risc-v.hpp"
 
+void RiscV::popSppSpie() {
+    __asm__ volatile("csrw sepc, ra");
+    __asm__ volatile("sret");
+}
+
 void RiscV::handle_supervisor_trap() {
     /// read values from registers
     uint64 syscall_code, a1, a2, a3, a4;
@@ -10,6 +15,25 @@ void RiscV::handle_supervisor_trap() {
     __asm__ volatile("mv %0, a4" : "=r"(a4));
 
     uint64 scause = read_scause();
+
+    /// interrupt caused by Timer
+    if (scause == 0x8000000000000001UL) {
+        ++TCB::time_slice_counter;
+        if (TCB::time_slice_counter >= TCB::running -> get_time_slice()) {
+            uint64 sepc = read_sepc();
+            uint64 sstatus = read_sstatus();
+            TCB::time_slice_counter = 0;
+            TCB::dispatch();
+            write_sstatus(sstatus);
+            write_sepc(sepc);
+        }
+        mc_sip(SIP_SSIE);
+    }
+
+    /// External interrupt (Console)
+    else if (scause == 0x8000000000000009UL) {
+        console_handler();
+    }
 
     /// illegal instruction
     if (scause == (uint64) 2) {
@@ -32,7 +56,7 @@ void RiscV::handle_supervisor_trap() {
             TCB::thread_exit();
             break;
         case THREAD_DISPATCH:
-//            TCB::_thread_dispatch();
+            TCB::dispatch();
             break;
         case THREAD_JOIN:
 //            TCB::_thread_join((thread_t) arg1);

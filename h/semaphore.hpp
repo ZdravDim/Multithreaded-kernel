@@ -1,7 +1,7 @@
 #ifndef semaphore
 #define semaphore
 
-class Semaphore {
+class Sem {
     //...
 };
 

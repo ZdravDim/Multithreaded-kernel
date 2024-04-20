@@ -1,13 +1,19 @@
 #ifndef riscv
 #define riscv
 
-#include "../lib/hw.h"
 #include "../h/syscall_c.h"
 #include "../h/memory_allocator.hpp"
 
+/// REMOVE WHEN IMPLEMENTED
+#include "../lib/console.h"
+
 class RiscV {
 public:
+    /// pop Spp and Spie bits (has to be a non inline function)
+    static void popSppSpie();
+    /// push registers to stack
     static void push_registers();
+    /// pop registers from stack
     static void pop_registers();
 
     static void handle_supervisor_trap();
@@ -58,7 +64,7 @@ inline void RiscV::write_scause(uint64 val) {
 
 inline uint64 RiscV::read_sepc() {
     uint64 volatile sepc;
-    __asm__ volatile ("csrr %0 sepc" : "=r"(sepc));
+    __asm__ volatile ("csrr %0, sepc" : "=r"(sepc));
     return sepc;
 }
 
