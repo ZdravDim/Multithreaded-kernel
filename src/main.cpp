@@ -38,7 +38,6 @@ void testThreads() {
 }
 void userMain();
 
-git remote set-url origin https://ZdravDim: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@github.com/ZdravDim/Multithreaded-kernel.git
 int main() {
     putc('1');
     /// Set interrupt routine handler
