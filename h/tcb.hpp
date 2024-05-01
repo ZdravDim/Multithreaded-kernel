@@ -2,6 +2,7 @@
 #define c_thread
 
 #include "../lib/hw.h"
+#include "../h/memory_allocator.hpp"
 
 class TCB;
 typedef TCB* thread_t;
@@ -18,7 +19,6 @@ public:
 
     enum Status { RUNNABLE, SLEEPING, BLOCKED, JOINED, FINISHED };
 
-    TCB(void (*function_body)(void*), void *arg, void *stack, Context context);
     static int thread_create(thread_t *handle, void(*start_routine)(void *), void *arg, void *stack_begin_address);
     static void wrapper_function();
     static void thread_exit();
@@ -32,16 +32,31 @@ public:
     void start();
 
     void set_status(Status status);
-    time_t get_time_to_sleep();
+    time_t get_time_to_sleep() const;
     void set_time_to_sleep(time_t time);
-    TCB* get_next_ready();
+    TCB* get_next_ready() const;
     void set_next_ready(TCB* next);
-    TCB* get_next_sleeping();
+    TCB* get_next_sleeping() const;
     void set_next_sleeping(TCB* next);
-    time_t get_time_slice();
+    time_t get_time_slice() const;
+
+    static TCB* running; /// running thread
 
 private:
-    static TCB* running; /// running thread
+    TCB(void (*function_body)(void*), void *arg, void *stack, Context context);
+
+//    TCB(void (*function_body)(void*), void *arg) :
+//            body(body),
+//            stack(body != nullptr ? new uint64[STACK_SIZE] : nullptr),
+//            context({(uint64) &threadWrapper,
+//                     stack != nullptr ? (uint64) &stack[STACK_SIZE] : 0
+//                    }),
+//            finished(false),
+//            blocked(false),
+//            main(body == nullptr),
+//            arg(arg)
+//    {}
+
     static int cnt; /// global thread counter
     int id; /// thread identification
     Context context; /// current thread context

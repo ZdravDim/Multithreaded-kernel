@@ -8,44 +8,49 @@ void operator delete(void* p) noexcept {
     mem_free(p);
 }
 
-Thread::Thread(void (*body)(void *), void *arg) {
-
+Thread::Thread(void (*body)(void *), void *arg) : myHandle(nullptr) {
+    thread_create(&myHandle, body, arg);
 }
 
 Thread::~Thread() {
-
+    myHandle -> set_status(TCB::FINISHED);
+    delete myHandle;
 }
 
 int Thread::start() {
+    myHandle -> start();
     return 0;
 }
 
 void Thread::dispatch() {
-
+    thread_dispatch();
 }
 
-int Thread::sleep(time_t) {
+int Thread::sleep(time_t time) {
+    time_sleep(time);
     return 0;
 }
 
-Thread::Thread() {
-
+Thread::Thread() : myHandle(nullptr) {
+//    thread_create(&myHandle, TCB::wrapper_function, (void*)this);
 }
 
-Semaphore::Semaphore(unsigned int init) {
-
+Semaphore::Semaphore(unsigned int init) : myHandle(nullptr) {
+    sem_open(&myHandle, init);
 }
 
 Semaphore::~Semaphore() {
-
+    if (myHandle) sem_close(myHandle);
 }
 
 int Semaphore::wait() {
-    return 0;
+    if (myHandle) return sem_wait(myHandle);
+    return -1;
 }
 
 int Semaphore::signal() {
-    return 0;
+    if (myHandle) return sem_signal(myHandle);
+    return -1;
 }
 
 int Semaphore::timedWait(time_t) {
@@ -65,9 +70,9 @@ PeriodicThread::PeriodicThread(time_t period) {
 }
 
 char Console::getc() {
-    return 0;
+    return ::getc();
 }
 
-void Console::putc(char) {
-
+void Console::putc(char c) {
+    ::putc(c);
 }

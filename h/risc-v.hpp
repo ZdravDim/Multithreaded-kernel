@@ -1,7 +1,7 @@
 #ifndef riscv
 #define riscv
 
-#include "../h/syscall_c.h"
+#include "../h/syscall_c.hpp"
 #include "../h/memory_allocator.hpp"
 
 /// REMOVE WHEN IMPLEMENTED

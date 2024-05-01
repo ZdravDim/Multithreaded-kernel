@@ -1,5 +1,4 @@
 #include "../h/tcb.hpp"
-#include "../h/memory_allocator.hpp"
 #include "../h/scheduler.hpp"
 #include "../h/risc-v.hpp"
 
@@ -13,13 +12,12 @@ int TCB::thread_create(thread_t *handle, void(*start_routine)(void *), void *arg
             (uint64) (stack_begin_address ? (uint64) stack_begin_address + DEFAULT_STACK_SIZE - 1 : 0) /// stack rises to lower locations
     };
     *handle = new TCB(start_routine, arg, stack_begin_address, context);
-    return (*handle) -> id; /// return 0?
+    return 0;
 }
 
-TCB::TCB(void (*function_body)(void *), void *arg, void *stack, Context context) {
+TCB::TCB(void (*function_body)(void *), void *arg, void *stack, Context context) : context(context) {
     id = cnt++;
     status = RUNNABLE;
-    this -> context = context;
     this -> function_body = function_body;
     this -> arg = arg;
     this -> stack = stack;
@@ -54,7 +52,7 @@ void TCB::dispatch() {
     if (old != running) context_switch(&old -> context, &running -> context);
 }
 
-TCB *TCB::get_next_ready() {
+TCB *TCB::get_next_ready() const {
     return next_ready;
 }
 
@@ -66,7 +64,7 @@ void TCB::set_next_sleeping(TCB *next) {
     next_sleeping = next;
 }
 
-TCB* TCB::get_next_sleeping() {
+TCB* TCB::get_next_sleeping() const {
     return next_sleeping;
 }
 
@@ -74,7 +72,7 @@ void TCB::set_time_to_sleep(time_t time) {
     time_to_sleep = time;
 }
 
-time_t TCB::get_time_to_sleep() {
+time_t TCB::get_time_to_sleep() const {
     return time_to_sleep;
 }
 
@@ -95,6 +93,6 @@ void TCB::operator delete(void *addr) {
     MemoryAllocator::mem_free(addr);
 }
 
-time_t TCB::get_time_slice() {
+time_t TCB::get_time_slice() const {
     return time_slice;
 }

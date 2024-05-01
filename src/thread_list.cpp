@@ -25,6 +25,10 @@ TCB *ThreadList::remove_first() {
     return thread;
 }
 
+void ThreadList::free() {
+    while (get_first()) remove_first();
+}
+
 void *ThreadList::Node::operator new(size_t size) {
     return MemoryAllocator::mem_alloc(MemoryAllocator::get_number_of_blocks(size));
 }

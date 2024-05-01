@@ -3,7 +3,6 @@
 
 #include "tcb.hpp"
 #include "thread_list.hpp"
-#include "memory_allocator.hpp"
 
 class Scheduler {
 public:

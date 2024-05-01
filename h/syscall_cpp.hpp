@@ -1,7 +1,7 @@
 #ifndef syscall_cpp
 #define syscall_cpp
 
-#include "syscall_c.h"
+#include "syscall_c.hpp"
 
 void* operator new (size_t);
 void operator delete (void *) noexcept;
@@ -18,7 +18,8 @@ protected:
     virtual void run () {}
 private:
     thread_t myHandle;
-    void (*body)(void*); void* arg;
+    void (*body)(void*);
+    void* arg;
 };
 
 class Semaphore {
