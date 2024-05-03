@@ -3,6 +3,24 @@
 #include "../h/risc-v.hpp"
 #include "../h/syscall_cpp.hpp"
 
+extern "C" void printNumber(uint64 num) {
+    __putc('\n');
+    __putc('N');
+    __putc(':');
+    __putc(' ');
+    if (!num) __putc('0');
+    uint64 num2 = 0;
+    while (num) {
+        num2 *= 10;
+        num2 += num % 10;
+        num /= 10;
+    }
+    while (num2) {
+        __putc(num2 % 10 + '0');
+        num2 /= 10;
+    }
+}
+
 void testMemoryAllocator() {
     MemoryAllocator::print();
     void *address = MemoryAllocator::mem_alloc(1);
@@ -13,8 +31,9 @@ void testMemoryAllocator() {
     int s2 = MemoryAllocator::mem_free(address);
     MemoryAllocator::print();
 
-    if (s1 == 0) __putc('1');
-    if (s2 == -3) __putc('2');
+    __putc('\n');
+    if (s1 == 0) __putc('G'); /// G means Good (passed)
+    if (s2 == -3) __putc('G'); /// same
 }
 void testMemory() {
     MemoryAllocator::print();
@@ -39,19 +58,17 @@ void testThreads() {
 void userMain();
 
 int main() {
-    putc('1');
     /// Set interrupt routine handler
-    RiscV::write_stvec((uint64) &RiscV::handle_supervisor_trap);
-    putc('2');
+    RiscV::write_stvec((uint64) &RiscV::handle_interrupt);
+    uint64 volatile num = RiscV::read_stvec();
+    printNumber(num);
     /// Enable software interrupts
-    RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
-    putc('3');
+//    RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
     /// Initialize Memory Allocator
-//    MemoryAllocator::initialize();
-    putc('4');
+    MemoryAllocator::initialize();
     /// Test Memory Allocation
-//    testMemoryAllocator();
-//    testMemory();
+    testMemoryAllocator();
+    testMemory();
     /// Test Threads
 //    testThreads();
     /// Test Everything

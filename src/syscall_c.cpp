@@ -54,6 +54,13 @@ int sem_trywait(sem_t id) { return 0; }
 
 int time_sleep (time_t) { return 0; }
 
-char getc () { return __getc(); }
+char getc () {
+    char volatile c;
+    syscall(GETC);
+    __asm__ volatile("mv %0, a0" : "=r"(c));
+    return c;
+}
 
-void putc (char c) { __putc(c); }
+void putc (char c) {
+    syscall(PUTC, c);
+}

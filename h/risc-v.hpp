@@ -11,11 +11,8 @@ class RiscV {
 public:
     /// pop Spp and Spie bits (has to be a non inline function)
     static void popSppSpie();
-    /// push registers to stack
-    static void push_registers();
-    /// pop registers from stack
-    static void pop_registers();
 
+    static void handle_interrupt();
     static void handle_supervisor_trap();
 
     static uint64 read_scause();

@@ -115,13 +115,15 @@ void MemoryAllocator::tryToJoin(MemSeg *seg) {
 }
 
 void MemoryAllocator::print() {
+    __putc('\n');
+    __putc('M');
+    __putc(':');
+    __putc(' ');
     for (MemSeg* tmp = freeSegHead; tmp; tmp = tmp -> next) __putc('f');
-    __putc('\n');
+    __putc('\t');
     for (MemSeg* tmp = usedSegHead; tmp; tmp = tmp -> next) __putc('u');
-    __putc('\n');
-    __putc('\n');
 }
 
-int MemoryAllocator::get_number_of_blocks(size_t size) {
+uint64 MemoryAllocator::get_number_of_blocks(size_t size) {
     return (size + sizeof(MemoryAllocator::MemSeg) + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE;
 }

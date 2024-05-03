@@ -1,5 +1,16 @@
 #include "../h/risc-v.hpp"
 
+extern "C" void printNumber(uint64 num);
+
+enum Interrupts {
+    SOFTWARE_INTERRUPT   = 0x8000000000000001UL,
+    HARDWARE_INTERRUPT   = 0x8000000000000009UL,
+    INVALID_INTERRUPT    = 0x0000000000000002UL,
+    USER_INTERRUPT       = 0x0000000000000008UL,
+    SUPERVISOR_INTERRUPT = 0x0000000000000009UL,
+};
+
+/// returns to user mode from supervisor mode
 void RiscV::popSppSpie() {
     __asm__ volatile("csrw sepc, ra");
     __asm__ volatile("sret");
@@ -17,7 +28,7 @@ void RiscV::handle_supervisor_trap() {
     uint64 scause = read_scause();
 
     /// interrupt caused by Timer
-    if (scause == 0x8000000000000001UL) {
+    if (scause == SOFTWARE_INTERRUPT) {
 //        ++TCB::time_slice_counter;
 //        if (TCB::time_slice_counter >= TCB::running -> get_time_slice()) {
 //            uint64 sepc = read_sepc();
@@ -31,29 +42,27 @@ void RiscV::handle_supervisor_trap() {
     }
 
     /// External interrupt (Console)
-    else if (scause == 0x8000000000000009UL) {
+    else if (scause == HARDWARE_INTERRUPT) {
         console_handler();
     }
 
     /// illegal instruction
-    else if (scause == 0x0000000000000002UL) {
+    else if (scause == INVALID_INTERRUPT) {
         uint64 val = 1;
         __asm__ volatile("mv a0, %0" : : "r"(val));
         return;
     }
 
-    /// interrupt from supervisor mode
-    if (scause == 0x0000000000000009UL) {
-        uint64 sepc = read_sepc() + 4;
-        uint64 sstatus = read_sstatus();
-        TCB::time_slice_counter = 0;
-        TCB::dispatch();
-        write_sstatus(sstatus);
-        write_sepc(sepc);
-    }
+    /// interrupt from supervisor / user mode
+    else if (scause == USER_INTERRUPT || scause == SUPERVISOR_INTERRUPT) {
+//        printNumber(read_sepc());
+//        uint64 sepc = read_sepc() + 4L;
+//        uint64 sstatus = read_sstatus();
+//
+//        write_sstatus(sstatus);
+//        write_sepc(sepc);
+//        printNumber(sepc);
 
-    /// interrupt from user mode
-    else if (scause == 0x0000000000000008UL) {
         switch(syscall_code) {
             case MEM_ALLOC:
                 MemoryAllocator::mem_alloc((size_t) a1);

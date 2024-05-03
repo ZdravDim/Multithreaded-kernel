@@ -40,9 +40,9 @@ void TCB::wrapper_function() {
 }
 
 void TCB::yield(TCB *old_running, TCB *new_running) {
-    RiscV::push_registers();
+//    RiscV::push_registers();
     if (old_running != new_running) context_switch(&old_running -> context, &new_running -> context);
-    RiscV::pop_registers();
+//    RiscV::pop_registers();
 }
 
 void TCB::dispatch() {

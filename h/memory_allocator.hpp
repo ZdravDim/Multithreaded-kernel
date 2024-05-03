@@ -19,10 +19,10 @@ public:
 
     static void* mem_alloc(size_t size);
     static int mem_free(void* addr);
-    static int get_number_of_blocks(size_t size);
+    static size_t get_number_of_blocks(size_t size);
     static void print();
 private:
-    MemoryAllocator() {}
+    MemoryAllocator() = default;
     static void removeNode(MemSeg *toRemove, MemSeg *nextSeg, bool newIsCreated);
     static void tryToJoin(MemSeg *seg);
     static MemoryAllocator* instance;
