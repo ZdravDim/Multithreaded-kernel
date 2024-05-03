@@ -70,8 +70,9 @@ int main() {
     testMemoryAllocator();
     testMemory();
     /// Test Threads
-//    testThreads();
+    testThreads();
     /// Test Everything
 //    userMain();
+    __putc('\n');
     return 0;
 }
