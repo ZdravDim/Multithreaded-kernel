@@ -20,14 +20,6 @@ TCB* Scheduler::get() {
     return head;
 }
 
-void *Scheduler::operator new(size_t size) {
-    return MemoryAllocator::mem_alloc(MemoryAllocator::get_number_of_blocks(size));
-}
-
-void Scheduler::operator delete(void *addr) {
-    MemoryAllocator::mem_free(addr);
-}
-
 void Scheduler::put_to_sleep(TCB *thread, time_t time) {
     thread -> set_status(TCB::Status::SLEEPING);
     if (!head_sleeping) {

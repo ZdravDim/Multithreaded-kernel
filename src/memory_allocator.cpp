@@ -24,7 +24,7 @@ void MemoryAllocator::removeNode(MemSeg *toRemove, MemSeg *nextSeg, bool newIsCr
     if (toRemove -> next) toRemove -> next -> prev = (newIsCreated) ? toRemove -> prev : nextSeg;
 }
 
-/// allocate `size` bytes, rounded up to MEM_BLOCK_SIZE
+/// allocate `size` blocks
 void *MemoryAllocator::mem_alloc(size_t size) {
     if (size <= 0) return nullptr;
     size_t bytesToAllocate = size * MEM_BLOCK_SIZE;
@@ -124,6 +124,6 @@ void MemoryAllocator::print() {
     for (MemSeg* tmp = usedSegHead; tmp; tmp = tmp -> next) __putc('u');
 }
 
-uint64 MemoryAllocator::get_number_of_blocks(size_t size) {
+size_t MemoryAllocator::get_number_of_blocks(size_t size) {
     return (size + sizeof(MemoryAllocator::MemSeg) + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE;
 }

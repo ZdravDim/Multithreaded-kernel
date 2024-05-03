@@ -19,7 +19,7 @@ private:
         void* operator new(size_t size);
         void operator delete(void* addr);
 
-        Node(TCB* data) : data(data), next(nullptr) {}
+        explicit Node(TCB* data) : data(data), next(nullptr) {}
     };
 
     struct Node* head = nullptr, *tail = nullptr;

@@ -11,10 +11,16 @@ class RiscV {
 public:
     /// pop Spp and Spie bits (has to be a non inline function)
     static void popSppSpie();
-
+    /// asm function, push all registers to stack
+    static void push_registers();
+    /// asm function, pop all registers from stack
+    static void pop_registers();
+    /// asm function, saving context before handling interrupt
     static void handle_interrupt();
+    /// interrupt handler
     static void handle_supervisor_trap();
 
+    /// manipulate registers
     static uint64 read_scause();
     static void write_scause(uint64 val);
     static uint64 read_sepc();
@@ -49,6 +55,7 @@ public:
 
 };
 
+/// inline implementations
 inline uint64 RiscV::read_scause() {
     uint64 volatile scause;
     __asm__ volatile ("csrr %0, scause" : "=r"(scause));

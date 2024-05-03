@@ -22,6 +22,7 @@ int mem_free (void* addr) {
 
 int thread_create (thread_t* handle, void(*start_routine)(void*), void* arg) {
     void* stack_space = nullptr;
+    /// main thread alredy has it's stack
     if (start_routine) stack_space = mem_alloc(DEFAULT_STACK_SIZE);
     int volatile status;
     syscall(THREAD_CREATE, (uint64) handle, (uint64) start_routine, (uint64) arg, (uint64) stack_space);

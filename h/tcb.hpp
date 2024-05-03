@@ -31,6 +31,8 @@ public:
 
     void start();
 
+    bool is_finished() const;
+
     void set_status(Status status);
     time_t get_time_to_sleep() const;
     void set_time_to_sleep(time_t time);
@@ -44,18 +46,6 @@ public:
 
 private:
     TCB(void (*function_body)(void*), void *arg, void *stack, Context context);
-
-//    TCB(void (*function_body)(void*), void *arg) :
-//            body(body),
-//            stack(body != nullptr ? new uint64[STACK_SIZE] : nullptr),
-//            context({(uint64) &threadWrapper,
-//                     stack != nullptr ? (uint64) &stack[STACK_SIZE] : 0
-//                    }),
-//            finished(false),
-//            blocked(false),
-//            main(body == nullptr),
-//            arg(arg)
-//    {}
 
     static int cnt; /// global thread counter
     int id; /// thread identification

@@ -10,12 +10,10 @@ public:
     static void put_to_sleep(TCB* thread, time_t time);
     static TCB* get();
 
-    void* operator new(size_t size);
-    void operator delete(void* addr);
+    Scheduler(Scheduler &) = delete;
+    Scheduler() = delete;
 
 private:
-    Scheduler() = default;
-    Scheduler(Scheduler &) = delete;
 
     static TCB* head_ready, *tail_ready;
     static TCB* head_sleeping;

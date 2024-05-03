@@ -9,16 +9,18 @@ extern "C" void printNumber(uint64 num) {
     __putc(':');
     __putc(' ');
     if (!num) __putc('0');
-    uint64 num2 = 0;
+    uint64 num2 = 0, zero_count = 0;
     while (num) {
         num2 *= 10;
         num2 += num % 10;
+        if (!num2) ++zero_count;
         num /= 10;
     }
     while (num2) {
         __putc(num2 % 10 + '0');
         num2 /= 10;
     }
+    while (zero_count--) __putc('0');
 }
 
 void testMemoryAllocator() {
@@ -35,7 +37,7 @@ void testMemoryAllocator() {
     if (s1 == 0) __putc('G'); /// G means Good (passed)
     if (s2 == -3) __putc('G'); /// same
 }
-void testMemory() {
+void testMemoryC() {
     MemoryAllocator::print();
     void* address = mem_alloc(50);
     MemoryAllocator::print();
@@ -49,30 +51,42 @@ void workerB(void *args) {
     for (int i = 0; i < 10; ++i) __putc('B');
 }
 void testThreads() {
-    auto* t1 = new Thread(workerA, nullptr);
-    t1 -> start();
+    thread_t main;
+    thread_create(&main, nullptr, nullptr);
+    TCB::running = main;
 
-    thread_t t2;
-    thread_create(&t2, workerA, nullptr);
+    thread_t thread1;
+    thread_create(&thread1, workerA, nullptr);
+
+    thread_t thread2;
+    thread_create(&thread2, workerB, nullptr);
+
+    while (!thread1 -> is_finished() && !thread2 -> is_finished()) thread_dispatch();
 }
-void userMain();
 
-int main() {
+void userMain();
+void initialize() {
     /// Set interrupt routine handler
     RiscV::write_stvec((uint64) &RiscV::handle_interrupt);
-    uint64 volatile num = RiscV::read_stvec();
-    printNumber(num);
     /// Enable software interrupts
 //    RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
     /// Initialize Memory Allocator
     MemoryAllocator::initialize();
+}
+void test() {
     /// Test Memory Allocation
     testMemoryAllocator();
-    testMemory();
+    testMemoryC();
     /// Test Threads
     testThreads();
     /// Test Everything
 //    userMain();
+}
+
+
+int main() {
+    initialize();
+    test();
     __putc('\n');
     return 0;
 }

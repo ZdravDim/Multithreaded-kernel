@@ -9,7 +9,8 @@ time_t TCB::time_slice_counter = 0;
 int TCB::thread_create(thread_t *handle, void(*start_routine)(void *), void *arg, void *stack_begin_address) {
     Context context = {
             (uint64) wrapper_function,
-            (uint64) (stack_begin_address ? (uint64) stack_begin_address + DEFAULT_STACK_SIZE - 1 : 0) /// stack rises to lower locations
+            /// stack starts from max address, rises to lower locations
+            (uint64) (stack_begin_address ? (uint64) stack_begin_address + DEFAULT_STACK_SIZE - 1 : 0)
     };
     *handle = new TCB(start_routine, arg, stack_begin_address, context);
     return 0;
@@ -40,16 +41,16 @@ void TCB::wrapper_function() {
 }
 
 void TCB::yield(TCB *old_running, TCB *new_running) {
-//    RiscV::push_registers();
+    RiscV::push_registers();
     if (old_running != new_running) context_switch(&old_running -> context, &new_running -> context);
-//    RiscV::pop_registers();
+    RiscV::pop_registers();
 }
 
 void TCB::dispatch() {
     TCB* old = running;
     if (old -> status != FINISHED && old -> status != BLOCKED) Scheduler::put(old);
     running = Scheduler::get();
-    if (old != running) context_switch(&old -> context, &running -> context);
+    if (old != running) yield(old, running);
 }
 
 TCB *TCB::get_next_ready() const {
@@ -76,8 +77,8 @@ time_t TCB::get_time_to_sleep() const {
     return time_to_sleep;
 }
 
-void TCB::set_status(TCB::Status status) {
-    this -> status = status;
+void TCB::set_status(TCB::Status stat) {
+    this -> status = stat;
 }
 
 void TCB::start() {
@@ -95,4 +96,8 @@ void TCB::operator delete(void *addr) {
 
 time_t TCB::get_time_slice() const {
     return time_slice;
+}
+
+bool TCB::is_finished() const {
+    return status == FINISHED;
 }

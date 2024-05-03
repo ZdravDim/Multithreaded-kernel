@@ -2,6 +2,7 @@
 
 extern "C" void printNumber(uint64 num);
 
+/// scause register values
 enum Interrupts {
     SOFTWARE_INTERRUPT   = 0x8000000000000001UL,
     HARDWARE_INTERRUPT   = 0x8000000000000009UL,
@@ -10,12 +11,14 @@ enum Interrupts {
     SUPERVISOR_INTERRUPT = 0x0000000000000009UL,
 };
 
-/// returns to user mode from supervisor mode
+/// used in thread wrapper function when initializing thread because thread stack is empty
+/// pc = (sepc = ra)
 void RiscV::popSppSpie() {
     __asm__ volatile("csrw sepc, ra");
     __asm__ volatile("sret");
 }
 
+/// interrupt handler
 void RiscV::handle_supervisor_trap() {
     /// read values from registers
     uint64 syscall_code, a1, a2, a3, a4;
@@ -55,13 +58,8 @@ void RiscV::handle_supervisor_trap() {
 
     /// interrupt from supervisor / user mode
     else if (scause == USER_INTERRUPT || scause == SUPERVISOR_INTERRUPT) {
-//        printNumber(read_sepc());
-//        uint64 sepc = read_sepc() + 4L;
-//        uint64 sstatus = read_sstatus();
-//
-//        write_sstatus(sstatus);
-//        write_sepc(sepc);
-//        printNumber(sepc);
+
+//        write_sepc(read_sepc() + 4);
 
         switch(syscall_code) {
             case MEM_ALLOC:
