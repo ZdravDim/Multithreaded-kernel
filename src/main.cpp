@@ -45,9 +45,11 @@ void testMemoryC() {
     MemoryAllocator::print();
 }
 void workerA(void *args) {
+    __putc('\n');
     for (int i = 0; i < 10; ++i) __putc('A');
 }
 void workerB(void *args) {
+    __putc('\n');
     for (int i = 0; i < 10; ++i) __putc('B');
 }
 void testThreads() {

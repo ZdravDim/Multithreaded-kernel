@@ -59,7 +59,8 @@ void RiscV::handle_supervisor_trap() {
     /// interrupt from supervisor / user mode
     else if (scause == USER_INTERRUPT || scause == SUPERVISOR_INTERRUPT) {
 
-        write_sepc(read_sepc() + 4);
+        uint64 sepc = read_sepc() + 4;
+        uint64 sstatus = read_sstatus();
 
         switch(syscall_code) {
             case MEM_ALLOC:
@@ -115,5 +116,7 @@ void RiscV::handle_supervisor_trap() {
             default:
                 break;
         }
+        write_sepc(sepc);
+        write_sstatus(sstatus);
     }
 }
