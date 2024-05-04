@@ -51,17 +51,15 @@ void workerB(void *args) {
     for (int i = 0; i < 10; ++i) __putc('B');
 }
 void testThreads() {
-    thread_t main;
-    thread_create(&main, nullptr, nullptr);
-    TCB::running = main;
+    static thread_t threads[3];
 
-    thread_t thread1;
-    thread_create(&thread1, workerA, nullptr);
+    thread_create(&threads[0], nullptr, nullptr);
+    TCB::running = threads[0];
 
-    thread_t thread2;
-    thread_create(&thread2, workerB, nullptr);
+    thread_create(&threads[1], workerA, nullptr);
+    thread_create(&threads[2], workerB, nullptr);
 
-    while (!thread1 -> is_finished() && !thread2 -> is_finished()) thread_dispatch();
+    while (!threads[1] -> is_finished() || !threads[2] -> is_finished()) thread_dispatch();
 }
 
 void userMain();

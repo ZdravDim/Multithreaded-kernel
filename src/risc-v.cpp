@@ -59,7 +59,7 @@ void RiscV::handle_supervisor_trap() {
     /// interrupt from supervisor / user mode
     else if (scause == USER_INTERRUPT || scause == SUPERVISOR_INTERRUPT) {
 
-//        write_sepc(read_sepc() + 4);
+        write_sepc(read_sepc() + 4);
 
         switch(syscall_code) {
             case MEM_ALLOC:
