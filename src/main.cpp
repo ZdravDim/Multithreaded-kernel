@@ -45,12 +45,20 @@ void testMemoryC() {
     MemoryAllocator::print();
 }
 void workerA(void *args) {
-    __putc('\n');
-    for (int i = 0; i < 10; ++i) __putc('A');
+    while (1) {
+        __putc('\n');
+        for (int i = 0; i < 10; ++i) __putc('A');
+        thread_dispatch();
+        thread_exit();
+    }
 }
 void workerB(void *args) {
-    __putc('\n');
-    for (int i = 0; i < 10; ++i) __putc('B');
+    while (1) {
+        __putc('\n');
+        for (int i = 0; i < 10; ++i) __putc('B');
+        thread_dispatch();
+        thread_exit();
+    }
 }
 void testThreads() {
     static thread_t threads[3];
@@ -63,8 +71,10 @@ void testThreads() {
 
     while (!threads[1] -> is_finished() || !threads[2] -> is_finished()) thread_dispatch();
 }
-
 void userMain();
+void userMainWrapper(void *args) {
+    userMain();
+}
 void initialize() {
     /// Set interrupt routine handler
     RiscV::write_stvec((uint64) &RiscV::handle_interrupt);
@@ -75,12 +85,14 @@ void initialize() {
 }
 void test() {
     /// Test Memory Allocation
-    testMemoryAllocator();
-    testMemoryC();
+//    testMemoryAllocator();
+//    testMemoryC();
     /// Test Threads
     testThreads();
     /// Test Everything
-//    userMain();
+//    static thread_t umain;
+//    thread_create(&umain, userMainWrapper, nullptr);
+//    while (!umain -> is_finished()) thread_dispatch();
 }
 
 

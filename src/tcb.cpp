@@ -6,6 +6,8 @@ int TCB::cnt = 0;
 TCB* TCB::running = nullptr;
 time_t TCB::time_slice_counter = 0;
 
+extern "C" void printNumber(uint64 num);
+
 int TCB::thread_create(thread_t *handle, void(*start_routine)(void *), void *arg, void *stack_begin_address) {
     Context context = {
             (uint64) wrapper_function,
@@ -35,8 +37,8 @@ void TCB::thread_exit() {
 }
 
 void TCB::wrapper_function() {
-    RiscV::popSppSpie();
-    running -> function_body(running -> arg);
+//    RiscV::popSppSpie();
+    if (running -> function_body) running -> function_body(running -> arg);
     thread_exit();
 }
 
@@ -48,7 +50,7 @@ void TCB::yield(TCB *old_running, TCB *new_running) {
 
 void TCB::dispatch() {
     TCB* old = running;
-    if (old -> status != FINISHED && old -> status != BLOCKED) Scheduler::put(old);
+    if (old -> status == RUNNABLE) Scheduler::put(old);
     running = Scheduler::get();
     if (old != running) yield(old, running);
 }
