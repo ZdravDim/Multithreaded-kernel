@@ -7,7 +7,8 @@
 
 class Sem {
 public:
-    explicit Sem(unsigned init = 1) : value((int) init), closed(false) {}
+    static int open(Sem **handle, unsigned init = 1);
+    void close();
     virtual ~Sem ();
     int wait ();
     int signal ();
@@ -17,6 +18,7 @@ public:
     void unblock();
 
 private:
+    explicit Sem(unsigned init = 1) : value((int) init), closed(false) {}
     ThreadList blocked_threads;
     int value;
     bool closed;

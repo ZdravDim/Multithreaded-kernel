@@ -3,9 +3,7 @@
 
 #include "../h/syscall_c.hpp"
 #include "../h/memory_allocator.hpp"
-
-/// REMOVE WHEN IMPLEMENTED
-#include "../lib/console.h"
+#include "../h/console.hpp"
 
 class RiscV {
 public:

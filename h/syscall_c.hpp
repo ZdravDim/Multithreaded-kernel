@@ -18,6 +18,9 @@ enum SYSCALL_CODES {
     SEM_CLOSE = 0x22,
     SEM_WAIT = 0x23,
     SEM_SIGNAL = 0x24,
+    SEM_TIMEDWAIT = 0x25,
+    SEM_TRYWAIT = 0x26,
+    TIME_SLEEP = 0x31,
     GETC = 0x41,
     PUTC = 0x42
 };

@@ -61,7 +61,7 @@ void workerB(void *args) {
     }
 }
 void testThreads() {
-    static thread_t threads[3];
+    thread_t threads[3];
 
     thread_create(&threads[0], nullptr, nullptr);
     TCB::running = threads[0];
@@ -70,6 +70,9 @@ void testThreads() {
     thread_create(&threads[2], workerB, nullptr);
 
     while (!threads[1] -> is_finished() || !threads[2] -> is_finished()) thread_dispatch();
+}
+void testSemaphore() {
+
 }
 void userMain();
 void userMainWrapper(void *args) {
@@ -89,6 +92,8 @@ void test() {
 //    testMemoryC();
     /// Test Threads
     testThreads();
+    /// Test Semaphore
+    testSemaphore();
     /// Test Everything
 //    static thread_t umain;
 //    thread_create(&umain, userMainWrapper, nullptr);

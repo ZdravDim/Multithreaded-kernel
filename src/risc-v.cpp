@@ -78,44 +78,40 @@ void RiscV::handle_supervisor_trap() {
             case THREAD_DISPATCH:
                 TCB::dispatch();
                 break;
-            case THREAD_JOIN:
+//            case THREAD_JOIN:
 //            TCB::_thread_join((thread_t) arg1);
                 break;
-//        case THREAD_JOIN_TIME:
-////            TCB::_thread_join((thread_t) arg1, (time_t) arg2);
-//            break;
-//        case THREAD_FORK:
-////            TCB::_fork();
-//            break;
-//        case THREAD_KILL:
-////            TCB::_kill((thread_t) arg1);
-//            break;
             case SEM_OPEN:
-//            Sem::_sem_open((sem_t *) arg1, arg2);
+                Sem::open((sem_t *) a1, a2);
                 break;
             case SEM_CLOSE:
-//            Sem::_sem_close((sem_t) arg1);
+                ((sem_t) a1) -> close();
                 break;
             case SEM_WAIT:
-//            Sem::_sem_wait((sem_t) arg1);
+                ((sem_t) a1) -> wait();
                 break;
             case SEM_SIGNAL:
-//            Sem::_sem_signal((sem_t) arg1);
+                ((sem_t) a1) -> signal();
                 break;
-//        case TIME_SLEEP:
-////            Cradle::_time_sleep((time_t) arg1);
-//            break;
-//        case THREAD_WAKE:
-////            Cradle::_thread_wake((thread_t) arg1);
+            case SEM_TIMEDWAIT:
+                ((sem_t) a1) -> timedWait((time_t) a2);
+                break;
+            case SEM_TRYWAIT:
+                ((sem_t) a1) -> tryWait();
+                break;
+            case TIME_SLEEP:
+                //...
+                break;
             case GETC:
-//            IO::_getc();
+                Con::getc();
                 break;
             case PUTC:
-//            IO::_putc((char) arg1);
+                Con::putc(a1);
                 break;
             default:
                 break;
         }
+
         write_sepc(sepc);
         write_sstatus(sstatus);
     }

@@ -1,5 +1,15 @@
 #include "../h/semaphore.hpp"
 
+int Sem::open(Sem **handle, unsigned int init) {
+    *handle = new Sem(init);
+    if (!(*handle)) return -1;
+    return 0;
+}
+
+void Sem::close() {
+    closed = true;
+}
+
 Sem::~Sem() {
     blocked_threads.free();
 }

@@ -41,19 +41,52 @@ void thread_dispatch () {
     syscall(THREAD_DISPATCH);
 }
 
-int sem_open (sem_t* handle, unsigned init) { return 0; }
+int sem_open (sem_t* handle, unsigned init) {
+    int volatile status;
+    syscall(SEM_OPEN, (uint64) handle, (uint64) init);
+    __asm__ volatile("mv %0, a0" : "=r"(status));
+    return status;
+}
 
-int sem_close (sem_t handle) { return 0; }
+int sem_close (sem_t handle) {
+    int volatile status;
+    syscall(SEM_CLOSE, (uint64) handle);
+    __asm__ volatile("mv %0, a0" : "=r"(status));
+    return status;
+}
 
-int sem_wait (sem_t id) { return 0; }
+int sem_wait (sem_t id) {
+    int volatile status;
+    syscall(SEM_WAIT, (uint64) id);
+    __asm__ volatile("mv %0, a0" : "=r"(status));
+    return status;
+}
 
-int sem_signal (sem_t id) { return 0; }
+int sem_signal (sem_t id) {
+    int volatile status;
+    syscall(SEM_SIGNAL, (uint64) id);
+    __asm__ volatile("mv %0, a0" : "=r"(status));
+    return status;
+}
 
-int sem_timedwait(sem_t id, time_t timeout) { return 0; }
+int sem_timedwait(sem_t id, time_t timeout) {
+    int volatile status;
+    syscall(SEM_TIMEDWAIT, (uint64) id, (uint64) timeout);
+    __asm__ volatile("mv %0, a0" : "=r"(status));
+    return status;
+}
 
-int sem_trywait(sem_t id) { return 0; }
+int sem_trywait(sem_t id) {
+    int volatile status;
+    syscall(SEM_TRYWAIT, (uint64) id);
+    __asm__ volatile("mv %0, a0" : "=r"(status));
+    return status;
+}
 
-int time_sleep (time_t) { return 0; }
+int time_sleep (time_t) {
+    //..
+    return 0;
+}
 
 char getc () {
     char volatile c;
