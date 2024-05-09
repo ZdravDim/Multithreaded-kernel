@@ -83,9 +83,11 @@ int sem_trywait(sem_t id) {
     return status;
 }
 
-int time_sleep (time_t) {
-    //..
-    return 0;
+int time_sleep (time_t time) {
+    int volatile status;
+    syscall(TIME_SLEEP, (uint64) time);
+    __asm__ volatile("mv %0, a0" : "=r"(status));
+    return status;
 }
 
 char getc () {

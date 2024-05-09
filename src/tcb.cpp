@@ -9,16 +9,16 @@ time_t TCB::time_slice_counter = 0;
 extern "C" void printNumber(uint64 num);
 
 int TCB::thread_create(thread_t *handle, void(*start_routine)(void *), void *arg, void *stack_begin_address) {
-    Context context = {
-            (uint64) wrapper_function,
-            /// stack starts from max address, rises to lower locations
-            (uint64) (stack_begin_address ? (uint64) stack_begin_address + DEFAULT_STACK_SIZE - 1 : 0)
-    };
-    *handle = new TCB(start_routine, arg, stack_begin_address, context);
+    *handle = new TCB(start_routine, arg, stack_begin_address);
     return 0;
 }
 
-TCB::TCB(void (*function_body)(void *), void *arg, void *stack, Context context) : context(context) {
+TCB::TCB(void (*function_body)(void *), void *arg, void *stack) {
+    context = {
+            (uint64) wrapper_function,
+            /// stack starts from max address, rises to lower locations
+            (uint64) (stack ? (uint64) stack + DEFAULT_STACK_SIZE - 1 : 0)
+    };
     id = cnt++;
     status = RUNNABLE;
     this -> function_body = function_body;
@@ -37,7 +37,7 @@ void TCB::thread_exit() {
 }
 
 void TCB::wrapper_function() {
-//    RiscV::popSppSpie();
+    RiscV::popSppSpie();
     if (running -> function_body) running -> function_body(running -> arg);
     thread_exit();
 }

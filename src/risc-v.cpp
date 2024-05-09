@@ -32,16 +32,37 @@ void RiscV::handle_supervisor_trap() {
 
     /// interrupt caused by Timer
     if (scause == SOFTWARE_INTERRUPT) {
-//        ++TCB::time_slice_counter;
-//        if (TCB::time_slice_counter >= TCB::running -> get_time_slice()) {
-//            uint64 sepc = read_sepc();
-//            uint64 sstatus = read_sstatus();
-//            TCB::time_slice_counter = 0;
-//            TCB::dispatch();
-//            write_sstatus(sstatus);
-//            write_sepc(sepc);
-//        }
-//        mc_sip(SIP_SSIE);
+
+        /// set SSIE bit to 0 (interrupt finished)
+        mc_sip(SIP_SSIE);
+
+        __putc('\n');
+        __putc('t');
+        /// wake up threads who slept
+        TCB* first_waiting = Scheduler::head_sleeping;
+        if (first_waiting) {
+            --first_waiting -> time_to_sleep;
+            while (first_waiting && first_waiting -> time_to_sleep <= 0) {
+                Scheduler::put(first_waiting);
+                first_waiting -> status = TCB::RUNNABLE;
+                TCB* tmp = first_waiting;
+                first_waiting = first_waiting -> next_sleeping;
+                Scheduler::head_sleeping = first_waiting;
+                tmp -> next_sleeping = nullptr;
+            }
+        }
+
+        ++TCB::time_slice_counter;
+
+        /// time slice ran out
+        if (TCB::time_slice_counter >= TCB::running -> time_slice) {
+            uint64 sepc = read_sepc();
+            uint64 sstatus = read_sstatus();
+            TCB::time_slice_counter = 0;
+            TCB::dispatch();
+            write_sstatus(sstatus);
+            write_sepc(sepc);
+        }
     }
 
     /// External interrupt (Console)
@@ -78,9 +99,6 @@ void RiscV::handle_supervisor_trap() {
             case THREAD_DISPATCH:
                 TCB::dispatch();
                 break;
-//            case THREAD_JOIN:
-//            TCB::_thread_join((thread_t) arg1);
-                break;
             case SEM_OPEN:
                 Sem::open((sem_t *) a1, a2);
                 break;
@@ -100,7 +118,7 @@ void RiscV::handle_supervisor_trap() {
                 ((sem_t) a1) -> tryWait();
                 break;
             case TIME_SLEEP:
-                //...
+                Scheduler::put_to_sleep((time_t) a1);
                 break;
             case GETC:
                 Con::getc();

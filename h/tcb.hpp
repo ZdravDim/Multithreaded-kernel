@@ -45,7 +45,7 @@ public:
     static TCB* running; /// running thread
 
 private:
-    TCB(void (*function_body)(void*), void *arg, void *stack, Context context);
+    TCB(void (*function_body)(void*), void *arg, void *stack);
 
     static int cnt; /// global thread counter
     int id; /// thread identification
@@ -54,7 +54,7 @@ private:
     void (*function_body)(void*); /// thread function to execute
     void* arg; /// function arguments
     void* stack; /// thread stack
-    static time_t time_slice_counter; /// ?
+    static time_t time_slice_counter; /// time spent on currently running thread
     time_t time_slice; /// time given for executing
     TCB* next_ready; /// Scheduler ready list
     time_t time_to_sleep; /// not actual time, but time to sleep when this TCB becomes first in the list

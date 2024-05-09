@@ -44,20 +44,19 @@ void testMemoryC() {
     mem_free(address);
     MemoryAllocator::print();
 }
+void workerForever(void *args) {
+    while (1);
+}
 void workerA(void *args) {
     while (1) {
-        __putc('\n');
-        for (int i = 0; i < 10; ++i) __putc('A');
-        thread_dispatch();
-        thread_exit();
+        __putc('A');
+        time_sleep(1);
     }
 }
 void workerB(void *args) {
     while (1) {
-        __putc('\n');
-        for (int i = 0; i < 10; ++i) __putc('B');
-        thread_dispatch();
-        thread_exit();
+        __putc('B');
+        time_sleep(2);
     }
 }
 void testThreads() {
@@ -68,11 +67,26 @@ void testThreads() {
 
     thread_create(&threads[1], workerA, nullptr);
     thread_create(&threads[2], workerB, nullptr);
+    thread_create(&threads[3], workerForever, nullptr);
+
+    /// Enable software interrupts
+    RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
 
     while (!threads[1] -> is_finished() || !threads[2] -> is_finished()) thread_dispatch();
 }
 void testSemaphore() {
+    sem_t semaphore1;
+    sem_open(&semaphore1, 1);
 
+    thread_t thread1, thread2, main;
+    thread_create(&main, nullptr, nullptr);
+    TCB::running = main;
+    thread_create(&thread1, workerA, (void*) semaphore1);
+    thread_create(&thread2, workerB, (void*) semaphore1);
+
+    while (!thread1 -> is_finished() || !thread2 -> is_finished()) thread_dispatch();
+
+    sem_close(semaphore1);
 }
 void userMain();
 void userMainWrapper(void *args) {
@@ -81,8 +95,6 @@ void userMainWrapper(void *args) {
 void initialize() {
     /// Set interrupt routine handler
     RiscV::write_stvec((uint64) &RiscV::handle_interrupt);
-    /// Enable software interrupts
-//    RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
     /// Initialize Memory Allocator
     MemoryAllocator::initialize();
 }
@@ -93,7 +105,7 @@ void test() {
     /// Test Threads
     testThreads();
     /// Test Semaphore
-    testSemaphore();
+//    testSemaphore();
     /// Test Everything
 //    static thread_t umain;
 //    thread_create(&umain, userMainWrapper, nullptr);
