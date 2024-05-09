@@ -49,14 +49,14 @@ void workerForever(void *args) {
 }
 void workerA(void *args) {
     while (1) {
-        __putc('A');
         time_sleep(1);
+        __putc('A');
     }
 }
 void workerB(void *args) {
     while (1) {
-        __putc('B');
         time_sleep(2);
+        __putc('B');
     }
 }
 void testThreads() {
@@ -65,12 +65,12 @@ void testThreads() {
     thread_create(&threads[0], nullptr, nullptr);
     TCB::running = threads[0];
 
+    /// Enable software interrupts
+    RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
+
     thread_create(&threads[1], workerA, nullptr);
     thread_create(&threads[2], workerB, nullptr);
     thread_create(&threads[3], workerForever, nullptr);
-
-    /// Enable software interrupts
-    RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
 
     while (!threads[1] -> is_finished() || !threads[2] -> is_finished()) thread_dispatch();
 }

@@ -4,6 +4,8 @@
 #include "tcb.hpp"
 #include "thread_list.hpp"
 
+extern "C" void printNumber(uint64 num);
+
 class Scheduler {
 
     friend class RiscV;
@@ -17,6 +19,7 @@ public:
     Scheduler() = delete;
 
 private:
+    static void print_sleeping();
     static void change_thread();
     static TCB* head_ready, *tail_ready;
     static TCB* head_sleeping;

@@ -16,7 +16,9 @@ void Scheduler::put(TCB *thread) {
 TCB* Scheduler::get() {
     if (!head_ready) return nullptr;
     TCB *head = head_ready;
+    TCB *tmp = head;
     head_ready = head_ready -> get_next_ready();
+    tmp -> set_next_ready(nullptr);
     return head;
 }
 
@@ -44,7 +46,7 @@ int Scheduler::put_to_sleep(time_t time) {
             thread -> set_next_sleeping(tmp);
             if (prev) prev -> set_next_sleeping(thread);
             else head_sleeping = thread;
-            for (TCB* curr = tmp -> get_next_sleeping(); curr; curr = curr -> get_next_sleeping())
+            for (TCB* curr = tmp; curr; curr = curr -> get_next_sleeping())
                 curr -> set_time_to_sleep(curr -> get_time_to_sleep() - new_time);
             change_thread();
             return 0;
@@ -64,4 +66,9 @@ void Scheduler::change_thread() {
     TCB* old = TCB::running;
     TCB::running = Scheduler::get();
     if (old != TCB::running) TCB::yield(old, TCB::running);
+}
+
+void Scheduler::print_sleeping() {
+    for (TCB* tmp = head_sleeping; tmp; tmp = tmp -> get_next_sleeping()) printNumber(tmp -> get_time_to_sleep());
+    __putc('\n');
 }

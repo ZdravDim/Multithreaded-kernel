@@ -6,8 +6,6 @@ int TCB::cnt = 0;
 TCB* TCB::running = nullptr;
 time_t TCB::time_slice_counter = 0;
 
-extern "C" void printNumber(uint64 num);
-
 int TCB::thread_create(thread_t *handle, void(*start_routine)(void *), void *arg, void *stack_begin_address) {
     *handle = new TCB(start_routine, arg, stack_begin_address);
     return 0;

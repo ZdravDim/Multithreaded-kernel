@@ -36,8 +36,6 @@ void RiscV::handle_supervisor_trap() {
         /// set SSIE bit to 0 (interrupt finished)
         mc_sip(SIP_SSIE);
 
-        __putc('\n');
-        __putc('t');
         /// wake up threads who slept
         TCB* first_waiting = Scheduler::head_sleeping;
         if (first_waiting) {
@@ -47,8 +45,8 @@ void RiscV::handle_supervisor_trap() {
                 first_waiting -> status = TCB::RUNNABLE;
                 TCB* tmp = first_waiting;
                 first_waiting = first_waiting -> next_sleeping;
-                Scheduler::head_sleeping = first_waiting;
                 tmp -> next_sleeping = nullptr;
+                Scheduler::head_sleeping = first_waiting;
             }
         }
 
