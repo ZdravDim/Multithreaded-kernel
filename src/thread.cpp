@@ -1,4 +1,4 @@
-#include "../h/tcb.hpp"
+#include "../h/thread.hpp"
 #include "../h/scheduler.hpp"
 #include "../h/risc-v.hpp"
 

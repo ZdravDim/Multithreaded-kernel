@@ -1,7 +1,7 @@
 #ifndef thread_list
 #define thread_list
 
-#include "tcb.hpp"
+#include "thread.hpp"
 
 class ThreadList {
 public:

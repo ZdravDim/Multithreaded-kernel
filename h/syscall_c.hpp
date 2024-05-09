@@ -2,7 +2,7 @@
 #define syscall_c
 
 #include "../lib/hw.h"
-#include "tcb.hpp"
+#include "thread.hpp"
 #include "memory_allocator.hpp"
 #include "semaphore.hpp"
 

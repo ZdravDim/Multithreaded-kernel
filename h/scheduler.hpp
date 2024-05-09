@@ -1,7 +1,7 @@
 #ifndef scheduler
 #define scheduler
 
-#include "tcb.hpp"
+#include "thread.hpp"
 #include "thread_list.hpp"
 
 extern "C" void printNumber(uint64 num);
