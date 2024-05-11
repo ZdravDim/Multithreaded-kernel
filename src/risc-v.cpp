@@ -1,7 +1,5 @@
 #include "../h/risc-v.hpp"
 
-extern "C" void printNumber(uint64 num);
-
 /// scause register values
 enum Interrupts {
     SOFTWARE_INTERRUPT   = 0x8000000000000001UL,
@@ -13,7 +11,8 @@ enum Interrupts {
 
 /// used in thread wrapper function when initializing thread because thread stack is empty
 /// pc = (sepc = ra)
-void RiscV::popSppSpie() {
+void RiscV::popSppSpie(bool return_to_user_mode) {
+    if (return_to_user_mode) mc_sstatus(SSTATUS_SPP);
     __asm__ volatile("csrw sepc, ra");
     __asm__ volatile("sret");
 }
@@ -65,7 +64,19 @@ void RiscV::handle_supervisor_trap() {
 
     /// External interrupt (Console)
     else if (scause == HARDWARE_INTERRUPT) {
-        console_handler();
+        uint64 sepc = read_sepc();
+        uint64 sstatus = read_sstatus();
+        int irq = plic_claim();
+        if (irq == CONSOLE_IRQ) {
+            /// Maybe add constraint, limit nubmer of input chars to read
+            while (*(char *) CONSOLE_STATUS & CONSOLE_RX_STATUS_BIT) {
+                char c = *(char *) CONSOLE_RX_DATA;
+                Con::putc_input(c);
+            }
+        }
+        plic_complete(irq);
+        write_sepc(sepc);
+        write_sstatus(sstatus);
     }
 
     /// illegal instruction
@@ -119,10 +130,10 @@ void RiscV::handle_supervisor_trap() {
                 Scheduler::put_to_sleep((time_t) a1);
                 break;
             case GETC:
-                Con::getc();
+                Con::getc_input();
                 break;
             case PUTC:
-                Con::putc(a1);
+                Con::putc_output((char) a1);
                 break;
             default:
                 break;

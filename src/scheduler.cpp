@@ -67,8 +67,3 @@ void Scheduler::change_thread() {
     TCB::running = Scheduler::get();
     if (old != TCB::running) TCB::yield(old, TCB::running);
 }
-
-void Scheduler::print_sleeping() {
-    for (TCB* tmp = head_sleeping; tmp; tmp = tmp -> get_next_sleeping()) printNumber(tmp -> get_time_to_sleep());
-    __putc('\n');
-}

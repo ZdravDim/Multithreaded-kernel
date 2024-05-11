@@ -6,7 +6,6 @@
 class ThreadList {
 public:
     void push_back(TCB* thread);
-    void push_front(TCB* thread);
     TCB* get_first();
     TCB* remove_first();
     void free();

@@ -1,14 +1,7 @@
 #include "../h/thread_list.hpp"
-#include "../h/memory_allocator.hpp"
 
 void ThreadList::push_back(TCB *thread) {
     tail = (head ? head : tail -> next) = new Node(thread);
-}
-
-void ThreadList::push_front(TCB *thread) {
-    Node* node = new Node(thread);
-    node -> next = head;
-    head = node;
 }
 
 TCB *ThreadList::get_first() {

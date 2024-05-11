@@ -2,8 +2,8 @@
 #define semaphore
 
 #include "../lib/hw.h"
-#include "../h/thread_list.hpp"
-#include "../h/scheduler.hpp"
+#include "thread_list.hpp"
+#include "scheduler.hpp"
 
 class Sem {
 public:

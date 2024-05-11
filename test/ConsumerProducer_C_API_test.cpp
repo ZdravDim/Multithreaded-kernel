@@ -1,7 +1,7 @@
 
 #include "../h/syscall_c.hpp"
 
-#include "buffer.hpp"
+#include "bounded_buffer.hpp"
 
 static sem_t waitForAll;
 

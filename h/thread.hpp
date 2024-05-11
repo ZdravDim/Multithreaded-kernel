@@ -4,6 +4,8 @@
 #include "../lib/hw.h"
 #include "../h/memory_allocator.hpp"
 
+void kernelConsoleOutput(void *args);
+
 class TCB;
 typedef TCB* thread_t;
 

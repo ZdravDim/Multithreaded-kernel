@@ -47,7 +47,7 @@ void *MemoryAllocator::mem_alloc(size_t size) {
 
         /// update used memory list
         /// insert segment after tmp2
-        MemSeg* tmp2 = 0;
+        MemSeg* tmp2 = nullptr;
         if (usedSegHead && (char*) tmp > (char*) usedSegHead)
             for (tmp2 = usedSegHead; tmp2 -> next && (char*) tmp > (char*) (tmp2 -> next); tmp2 = tmp2 -> next);
         MemSeg* newUsed = (MemSeg*) tmp;
