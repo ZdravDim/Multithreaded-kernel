@@ -98,5 +98,5 @@ char getc () {
 }
 
 void putc (char c) {
-    syscall(PUTC, c);
+    syscall(PUTC, (uint64) c);
 }

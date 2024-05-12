@@ -5,6 +5,8 @@
 #include "thread_list.hpp"
 #include "scheduler.hpp"
 
+void printNumber(uint64 num);
+
 class Sem {
 public:
     static int open(Sem **handle, unsigned init = 1);

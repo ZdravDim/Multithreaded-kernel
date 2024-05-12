@@ -1,7 +1,7 @@
 #include "../h/thread_list.hpp"
 
 void ThreadList::push_back(TCB *thread) {
-    tail = (head ? head : tail -> next) = new Node(thread);
+    tail = (head ? tail -> next : head) = new Node(thread);
 }
 
 TCB *ThreadList::get_first() {
@@ -13,7 +13,7 @@ TCB *ThreadList::remove_first() {
     Node* tmp = head;
     TCB* thread = tmp -> data;
     head = head -> next;
-    head -> next = nullptr;
+    tmp -> next = nullptr;
     delete tmp;
     return thread;
 }

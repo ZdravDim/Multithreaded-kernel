@@ -39,14 +39,14 @@ void workerForever(void *args) {
 }
 void workerA(void *args) {
     while (1) {
-        time_sleep(4);
-        __putc('A');
+//        time_sleep(4);
+//        __putc('A');
     }
 }
 void workerB(void *args) {
     while (1) {
-        time_sleep(5);
-        __putc('B');
+//        time_sleep(5);
+//        __putc('B');
     }
 }
 void workerConsole(void *args) {

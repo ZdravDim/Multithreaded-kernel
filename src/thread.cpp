@@ -35,7 +35,8 @@ void TCB::thread_exit() {
 }
 
 void TCB::wrapper_function() {
-    if (running -> function_body && running->function_body != kernelConsoleOutput) RiscV::popSppSpie(false);
+    if (!running -> function_body || (running -> function_body && running->function_body == kernelConsoleOutput))
+        RiscV::popSppSpie(false);
     else RiscV::popSppSpie(true);
     if (running -> function_body) running -> function_body(running -> arg);
     thread_exit();

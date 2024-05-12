@@ -31,13 +31,14 @@ int Sem::signal() {
 
 void Sem::block() {
     TCB* old = TCB::running;
+    old -> set_status(TCB::BLOCKED);
     blocked_threads.push_back(old);
     TCB::running = Scheduler::get();
     TCB::yield(old, TCB::running);
 }
 
 void Sem::unblock() {
-    TCB* thread = blocked_threads.get_first();
+    TCB* thread = blocked_threads.remove_first();
     Scheduler::put(thread);
 }
 

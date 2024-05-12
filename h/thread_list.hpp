@@ -11,6 +11,7 @@ public:
     void free();
 
 private:
+
     struct Node {
         TCB* data;
         struct Node *next;
@@ -21,7 +22,8 @@ private:
         explicit Node(TCB* data) : data(data), next(nullptr) {}
     };
 
-    struct Node* head = nullptr, *tail = nullptr;
+    struct Node* head = nullptr;
+    struct Node* tail = nullptr;
 };
 
 #endif

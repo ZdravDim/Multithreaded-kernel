@@ -19,7 +19,7 @@ public:
         uint64 sp;
     };
 
-    enum Status { RUNNABLE, SLEEPING, BLOCKED, JOINED, FINISHED };
+    enum Status { RUNNABLE, SLEEPING, BLOCKED, FINISHED };
 
     static int thread_create(thread_t *handle, void(*start_routine)(void *), void *arg, void *stack_begin_address);
     static void wrapper_function();

@@ -32,9 +32,8 @@ void RiscV::handle_supervisor_trap() {
     /// interrupt caused by Timer
     if (scause == SOFTWARE_INTERRUPT) {
 
-        /// set SSIE bit to 0 (interrupt finished)
-        mc_sip(SIP_SSIE);
-
+        /// set SSIP bit to 0 (interrupt finished)
+        mc_sip(SIP_SSIP);
         /// wake up threads who slept
         TCB* first_waiting = Scheduler::head_sleeping;
         if (first_waiting) {
@@ -77,6 +76,7 @@ void RiscV::handle_supervisor_trap() {
         plic_complete(irq);
         write_sepc(sepc);
         write_sstatus(sstatus);
+        mc_sip(SIP_SEIP);
     }
 
     /// illegal instruction

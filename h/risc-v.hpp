@@ -29,8 +29,8 @@ public:
     static void write_stval(uint64 val);
 
     enum BitMaskSipSie {
-        SIP_SSIE = (1 << 1),
-        SIP_SEIE = (1 << 9),
+        SIP_SSIP = (1 << 1),
+        SIP_SEIP = (1 << 9),
     };
 
     static uint64 read_sip();
