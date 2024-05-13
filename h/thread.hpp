@@ -31,8 +31,6 @@ public:
     void* operator new(size_t size);
     void operator delete(void* addr);
 
-    void start();
-
     bool is_finished() const;
 
     void set_status(Status status);

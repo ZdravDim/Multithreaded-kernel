@@ -15,11 +15,11 @@ void Scheduler::put(TCB *thread) {
 
 TCB* Scheduler::get() {
     if (!head_ready) return nullptr;
-    TCB *head = head_ready;
-    TCB *tmp = head;
+    TCB *tmp = head_ready;
     head_ready = head_ready -> get_next_ready();
+    if (!head_ready) tail_ready = nullptr;
     tmp -> set_next_ready(nullptr);
-    return head;
+    return tmp;
 }
 
 int Scheduler::put_to_sleep(time_t time) {

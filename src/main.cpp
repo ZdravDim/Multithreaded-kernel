@@ -50,8 +50,9 @@ void workerB(void *args) {
     }
 }
 void workerConsole(void *args) {
-    char c = getc();
-    putc(c);
+    char s[] = "Hello world!";
+    char *p = s;
+    while (*p != '\0') putc(*p++);
 }
 
 void userMain();
@@ -75,16 +76,16 @@ int main() {
     RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
 
     thread_create(&threads[1], kernelConsoleOutput, nullptr); /// this gets blocked immediately
-    thread_create(&threads[2], workerA, nullptr);
-    thread_create(&threads[3], workerB, nullptr);
-    thread_create(&threads[4], workerForever, nullptr);
-    thread_create(&threads[5], workerConsole, nullptr); /// this as well
+    thread_create(&threads[2], workerForever, nullptr);
+//    thread_create(&threads[3], workerForever, nullptr);
+//    thread_create(&threads[4], workerConsole, nullptr);
+//
+//    while (true) thread_dispatch();
 
-    while (1) thread_dispatch();
     /// Test Everything
-//    static thread_t umain;
-//    thread_create(&umain, userMainWrapper, nullptr);
-//    while (!umain -> is_finished()) thread_dispatch();
+    thread_t umain;
+    thread_create(&umain, userMainWrapper, nullptr);
+    while (!umain -> is_finished()) thread_dispatch();
 
     return 0;
 }

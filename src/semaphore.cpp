@@ -6,26 +6,10 @@ int Sem::open(Sem **handle, unsigned int init) {
     return 0;
 }
 
-void Sem::close() {
-    closed = true;
-}
-
-Sem::~Sem() {
-    blocked_threads.free();
-}
-
-int Sem::wait() {
-    if (closed) return -1;
-    if (--value < 0) {
-        block();
-        if (closed) return -2; /// thread released because Semaphore is closed
-    }
-    return 0;
-}
-
-int Sem::signal() {
-    if (closed) return -1;
-    if (++value <= 0) unblock();
+int Sem::close(Sem *handle) {
+    if (!handle) return -1;
+    while (handle -> blocked_threads . get_first()) handle -> unblock();
+    delete handle;
     return 0;
 }
 
@@ -39,13 +23,42 @@ void Sem::block() {
 
 void Sem::unblock() {
     TCB* thread = blocked_threads.remove_first();
+    thread -> set_status(TCB::RUNNABLE);
     Scheduler::put(thread);
 }
 
-int Sem::timedWait(time_t time) {
+int Sem::wait(Sem *handle) {
+    if (!handle) return -1;
+    if (--handle -> value < 0) {
+        handle -> block();
+        if (!handle) return -2; /// thread released because Semaphore is closed
+    }
     return 0;
 }
 
-int Sem::tryWait() {
+int Sem::signal(Sem *handle) {
+    if (!handle) return -1;
+    if (++handle -> value <= 0) handle -> unblock();
     return 0;
+}
+
+int Sem::timedWait(Sem *handle, time_t) {
+    return 0;
+}
+
+int Sem::tryWait(Sem *handle) {
+    if (handle -> value > 0) return wait(handle);
+    return 1;
+}
+
+Sem::~Sem() {
+    blocked_threads.free();
+}
+
+void *Sem::operator new(size_t size) {
+    return MemoryAllocator::mem_alloc(MemoryAllocator::get_number_of_blocks(size));
+}
+
+void Sem::operator delete(void *addr) {
+    MemoryAllocator::mem_free(addr);
 }

@@ -83,11 +83,6 @@ void TCB::set_status(TCB::Status stat) {
     this -> status = stat;
 }
 
-void TCB::start() {
-    Scheduler::put(this);
-    if (!running) running = this;
-}
-
 void *TCB::operator new(size_t size) {
     return MemoryAllocator::mem_alloc(MemoryAllocator::get_number_of_blocks(size));
 }

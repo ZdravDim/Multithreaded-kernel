@@ -6,8 +6,8 @@ BoundedBuffer::BoundedBuffer() {
 }
 
 BoundedBuffer::~BoundedBuffer() {
-    item_available -> close();
-    space_available -> close();
+    Sem::close(item_available);
+    Sem::close(space_available);
 }
 
 void *BoundedBuffer::operator new(size_t size) {
@@ -19,16 +19,16 @@ void BoundedBuffer::operator delete(void *addr) {
 }
 
 void BoundedBuffer::putc(char c) {
-    space_available -> wait();
+    Sem::wait(space_available);
     array[tail] = c;
     tail = (tail + 1) % capacity;
-    item_available -> signal();
+    Sem::signal(item_available);
 }
 
 char BoundedBuffer::getc() {
-    item_available -> wait();
+    Sem::wait(item_available);
     char c = array[head];
     head = (head + 1) % capacity;
-    space_available -> signal();
+    Sem::signal(space_available);
     return c;
 }

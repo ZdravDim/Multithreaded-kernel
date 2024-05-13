@@ -112,19 +112,19 @@ void RiscV::handle_supervisor_trap() {
                 Sem::open((sem_t *) a1, a2);
                 break;
             case SEM_CLOSE:
-                ((sem_t) a1) -> close();
+                Sem::close((sem_t) a1);
                 break;
             case SEM_WAIT:
-                ((sem_t) a1) -> wait();
+                Sem::wait((sem_t) a1);
                 break;
             case SEM_SIGNAL:
-                ((sem_t) a1) -> signal();
+                Sem::signal((sem_t) a1);
                 break;
             case SEM_TIMEDWAIT:
-                ((sem_t) a1) -> timedWait((time_t) a2);
+                Sem::timedWait((sem_t) a1, (time_t) a2);
                 break;
             case SEM_TRYWAIT:
-                ((sem_t) a1) -> tryWait();
+                Sem::tryWait((sem_t) a1);
                 break;
             case TIME_SLEEP:
                 Scheduler::put_to_sleep((time_t) a1);
