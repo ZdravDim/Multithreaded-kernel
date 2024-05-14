@@ -26,10 +26,9 @@ public:
     virtual ~Sem ();
 
 private:
-    explicit Sem(unsigned init = 1) : value((int) init), closed(false) {}
+    explicit Sem(unsigned init = 1) : value((int) init) {}
     ThreadList blocked_threads;
     int value;
-    bool closed;
 };
 
 #endif

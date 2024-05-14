@@ -21,14 +21,14 @@ void BoundedBuffer::operator delete(void *addr) {
 void BoundedBuffer::putc(char c) {
     Sem::wait(space_available);
     array[tail] = c;
-    tail = (tail + 1) % capacity;
+    tail = (tail + 1) % CAPACITY;
     Sem::signal(item_available);
 }
 
 char BoundedBuffer::getc() {
     Sem::wait(item_available);
     char c = array[head];
-    head = (head + 1) % capacity;
+    head = (head + 1) % CAPACITY;
     Sem::signal(space_available);
     return c;
 }

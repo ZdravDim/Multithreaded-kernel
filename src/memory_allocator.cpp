@@ -1,5 +1,7 @@
 #include "../h/memory_allocator.hpp"
 
+void printNumber(uint64 num);
+
 typedef MemoryAllocator::MemSeg MemSeg;
 
 MemoryAllocator* MemoryAllocator::instance = nullptr;
@@ -13,7 +15,7 @@ void MemoryAllocator::initialize() {
         freeSegHead -> size = (size_t) HEAP_END_ADDR - (size_t) HEAP_START_ADDR;
         freeSegHead -> prev = nullptr;
         freeSegHead -> next = nullptr;
-        instance = (MemoryAllocator*) MemoryAllocator::mem_alloc(sizeof(MemoryAllocator));
+        instance = (MemoryAllocator*) MemoryAllocator::mem_alloc(get_number_of_blocks(sizeof(MemoryAllocator)));
     }
 }
 
@@ -21,7 +23,7 @@ void MemoryAllocator::initialize() {
 void MemoryAllocator::removeNode(MemSeg *toRemove, MemSeg *nextSeg, bool newIsCreated) {
     if (toRemove -> prev) toRemove -> prev -> next = nextSeg;
     else freeSegHead = nextSeg;
-    if (toRemove -> next) toRemove -> next -> prev = (newIsCreated) ? toRemove -> prev : nextSeg;
+    if (toRemove -> next) toRemove -> next -> prev = (newIsCreated) ? nextSeg : toRemove -> prev;
 }
 
 /// allocate `size` blocks
@@ -36,7 +38,7 @@ void *MemoryAllocator::mem_alloc(size_t size) {
         }
         /// update free memory list
         size_t remaining = tmp -> size - bytesToAllocate;
-        if (remaining < sizeof(MemSeg)) removeNode(tmp, tmp->next, false);
+        if (remaining <= sizeof(MemSeg)) removeNode(tmp, tmp->next, false);
         else {
             MemSeg* newFree = (MemSeg*) ((char*) tmp + bytesToAllocate);
             newFree -> prev = tmp -> prev;
@@ -119,9 +121,17 @@ void MemoryAllocator::print() {
     __putc('M');
     __putc(':');
     __putc(' ');
-    for (MemSeg* tmp = freeSegHead; tmp; tmp = tmp -> next) __putc('f');
+    for (MemSeg* tmp = freeSegHead; tmp; tmp = tmp -> next) {
+        printNumber(tmp -> size);
+        __putc(' ');
+        __putc('f');
+    }
     __putc('\t');
-    for (MemSeg* tmp = usedSegHead; tmp; tmp = tmp -> next) __putc('u');
+    for (MemSeg* tmp = usedSegHead; tmp; tmp = tmp -> next) {
+        printNumber(tmp -> size);
+        __putc(' ');
+        __putc('u');
+    }
 }
 
 size_t MemoryAllocator::get_number_of_blocks(size_t size) {

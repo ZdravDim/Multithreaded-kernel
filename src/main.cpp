@@ -39,18 +39,18 @@ void workerForever(void *args) {
 }
 void workerA(void *args) {
     while (1) {
-//        time_sleep(4);
-//        __putc('A');
+        time_sleep(3);
+        __putc('A');
     }
 }
 void workerB(void *args) {
     while (1) {
-//        time_sleep(5);
-//        __putc('B');
+        time_sleep(6);
+        __putc('B');
     }
 }
 void workerConsole(void *args) {
-    char s[] = "Hello world!";
+    char s[] = "Hello world!\n";
     char *p = s;
     while (*p != '\0') putc(*p++);
 }
@@ -76,9 +76,10 @@ int main() {
     RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
 
     thread_create(&threads[1], kernelConsoleOutput, nullptr); /// this gets blocked immediately
-    thread_create(&threads[2], workerForever, nullptr);
-//    thread_create(&threads[3], workerForever, nullptr);
-//    thread_create(&threads[4], workerConsole, nullptr);
+//    thread_create(&threads[2], workerForever, nullptr);
+//    thread_create(&threads[3], workerB, nullptr);
+//    thread_create(&threads[4], workerA, nullptr);
+//    thread_create(&threads[5], workerConsole, nullptr);
 //
 //    while (true) thread_dispatch();
 

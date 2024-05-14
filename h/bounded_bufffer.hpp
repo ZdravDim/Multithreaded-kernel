@@ -6,7 +6,7 @@
 #include "semaphore.hpp"
 #include "syscall_c.hpp"
 
-#define CAPACITY 1000
+#define CAPACITY 500
 
 class BoundedBuffer {
 public:
@@ -20,7 +20,6 @@ public:
     void operator delete(void* addr);
 
 private:
-    int capacity = CAPACITY;
     int head = 0;
     int tail = 0;
     sem_t space_available;

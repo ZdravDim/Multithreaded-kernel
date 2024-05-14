@@ -8,9 +8,8 @@ void Scheduler::put(TCB *thread) {
     if (tail_ready) {
         tail_ready -> set_next_ready(thread);
         tail_ready = thread;
-        return;
     }
-    head_ready = tail_ready = thread;
+    else head_ready = tail_ready = thread;
 }
 
 TCB* Scheduler::get() {
@@ -24,7 +23,6 @@ TCB* Scheduler::get() {
 
 int Scheduler::put_to_sleep(time_t time) {
     TCB* thread = TCB::running;
-    thread -> set_status(TCB::Status::SLEEPING);
     /// empty list case
     if (!head_sleeping) {
         head_sleeping = thread;
@@ -46,8 +44,7 @@ int Scheduler::put_to_sleep(time_t time) {
             thread -> set_next_sleeping(tmp);
             if (prev) prev -> set_next_sleeping(thread);
             else head_sleeping = thread;
-            for (TCB* curr = tmp; curr; curr = curr -> get_next_sleeping())
-                curr -> set_time_to_sleep(curr -> get_time_to_sleep() - new_time);
+            tmp -> set_time_to_sleep(tmp -> get_time_to_sleep() - new_time);
             change_thread();
             return 0;
         }
@@ -64,6 +61,7 @@ int Scheduler::put_to_sleep(time_t time) {
 
 void Scheduler::change_thread() {
     TCB* old = TCB::running;
+    old -> set_status(TCB::SLEEPING);
     TCB::running = Scheduler::get();
     if (old != TCB::running) TCB::yield(old, TCB::running);
 }
