@@ -67,7 +67,7 @@ int main() {
     MemoryAllocator::initialize();
     Con::initialize();
 
-    thread_t threads[6];
+    thread_t threads[3];
 
     thread_create(&threads[0], nullptr, nullptr);
     TCB::running = threads[0];
@@ -76,17 +76,12 @@ int main() {
     RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
 
     thread_create(&threads[1], kernelConsoleOutput, nullptr); /// this gets blocked immediately
-//    thread_create(&threads[2], workerForever, nullptr);
-//    thread_create(&threads[3], workerB, nullptr);
-//    thread_create(&threads[4], workerA, nullptr);
-//    thread_create(&threads[5], workerConsole, nullptr);
-//
-//    while (true) thread_dispatch();
 
     /// Test Everything
     thread_t umain;
     thread_create(&umain, userMainWrapper, nullptr);
-    while (!umain -> is_finished()) thread_dispatch();
+    while (!umain -> is_finished());
+    while (1) thread_dispatch();
 
     return 0;
 }

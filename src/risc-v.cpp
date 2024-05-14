@@ -11,8 +11,9 @@ enum Interrupts {
 
 /// used in thread wrapper function when initializing thread because thread stack is empty
 /// pc = (sepc = ra)
-void RiscV::popSppSpie(bool return_to_user_mode) {
-    if (return_to_user_mode) mc_sstatus(SSTATUS_SPP);
+void RiscV::popSppSpie() {
+    /// conditionally return to User mode
+    if (TCB::running -> function_body && TCB::running->function_body != kernelConsoleOutput) mc_sstatus(SSTATUS_SPP);
     __asm__ volatile("csrw sepc, ra");
     __asm__ volatile("sret");
 }

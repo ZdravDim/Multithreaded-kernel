@@ -62,7 +62,7 @@ static void workerBodyC(void* arg) {
         printString("C: i="); printInt(i); printString("\n");
     }
 
-    printString("A finished!\n");
+    printString("C finished!\n");
     finishedC = true;
     thread_dispatch();
 }
@@ -91,7 +91,7 @@ static void workerBodyD(void* arg) {
 
 
 void Threads_C_API_test() {
-    thread_t threads[4];
+    static thread_t threads[4];
     thread_create(&threads[0], workerBodyA, nullptr);
     printString("ThreadA created\n");
 
