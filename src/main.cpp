@@ -1,7 +1,6 @@
 #include "../lib/console.h"
 #include "../h/memory_allocator.hpp"
 #include "../h/risc-v.hpp"
-#include "../h/syscall_cpp.hpp"
 
 /// helper function
 void printNumber(uint64 num) {
@@ -25,7 +24,7 @@ void printNumber(uint64 num) {
 }
 /// kernel thread used for sending chars to console controller
 void kernelConsoleOutput(void *args) {
-    while (1) {
+    while (true) {
         /// Send data to Console Controller if data is ready
         while (*(char *) CONSOLE_STATUS & CONSOLE_TX_STATUS_BIT) {
             char c = Con::getc_output();
@@ -34,30 +33,35 @@ void kernelConsoleOutput(void *args) {
     }
 }
 
-void workerForever(void *args) {
-    while (1);
-}
-void workerA(void *args) {
-    while (1) {
-        time_sleep(3);
-        __putc('A');
-    }
-}
-void workerB(void *args) {
-    while (1) {
-        time_sleep(6);
-        __putc('B');
-    }
-}
-void workerConsole(void *args) {
-    char s[] = "Hello world!\n";
-    char *p = s;
-    while (*p != '\0') putc(*p++);
-}
-
 void userMain();
 void userMainWrapper(void *args) {
     userMain();
+}
+
+void workerA(void*) {
+    for (int i = 0; i < 4; ++i) {
+        printNumber(i);
+        __putc('(');
+        __putc('A');
+        __putc(')');
+        for (int j = 0; j < 10000; ++j) {
+            for (int k = 0; k < 30000; ++k) {}
+            thread_dispatch();
+        }
+    }
+}
+
+void workerB(void*) {
+    for (int i = 0; i < 16; ++i) {
+        printNumber(i);
+        __putc('(');
+        __putc('B');
+        __putc(')');
+        for (int j = 0; j < 10000; ++j) {
+            for (int k = 0; k < 30000; ++k) {}
+            thread_dispatch();
+        }
+    }
 }
 
 int main() {
@@ -67,21 +71,19 @@ int main() {
     MemoryAllocator::initialize();
     Con::initialize();
 
-    thread_t threads[3];
+    thread_t threads[4];
 
     thread_create(&threads[0], nullptr, nullptr);
     TCB::running = threads[0];
 
-    /// Enable software interrupts
+    /// Enable external interrupts
     RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
 
-    thread_create(&threads[1], kernelConsoleOutput, nullptr); /// this gets blocked immediately
+    thread_create(&threads[1], kernelConsoleOutput, nullptr);
 
     /// Test Everything
-    thread_t umain;
-    thread_create(&umain, userMainWrapper, nullptr);
-    while (!umain -> is_finished());
-    while (1) thread_dispatch();
+    thread_create(&threads[2], userMainWrapper, nullptr);
+    while (true) thread_dispatch();
 
     return 0;
 }

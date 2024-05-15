@@ -4,7 +4,7 @@
 #include "../lib/hw.h"
 #include "../h/memory_allocator.hpp"
 
-void kernelConsoleOutput(void *args);
+[[noreturn]] void kernelConsoleOutput(void *args);
 
 class TCB;
 typedef TCB* thread_t;
@@ -42,7 +42,6 @@ public:
     void set_next_ready(TCB* next);
     TCB* get_next_sleeping() const;
     void set_next_sleeping(TCB* next);
-    time_t get_time_slice() const;
 
     static TCB* running; /// running thread
 

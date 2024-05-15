@@ -31,7 +31,7 @@ TCB::TCB(void (*function_body)(void *), void *arg, void *stack) {
 
 void TCB::thread_exit() {
     running -> set_status(Status::FINISHED);
-    dispatch();
+    thread_dispatch();
 }
 
 void TCB::wrapper_function() {
@@ -49,7 +49,9 @@ void TCB::yield(TCB *old_running, TCB *new_running) {
 void TCB::dispatch() {
     TCB* old = running;
     if (old -> status == RUNNABLE) Scheduler::put(old);
+//    else if (old -> status == FINISHED) MemoryAllocator::mem_free(old -> stack);
     running = Scheduler::get();
+    time_slice_counter = 0;
     if (old != running) yield(old, running);
 }
 
@@ -95,10 +97,6 @@ void *TCB::operator new[](size_t size) {
 
 void TCB::operator delete[](void *addr) {
     MemoryAllocator::mem_free(addr);
-}
-
-time_t TCB::get_time_slice() const {
-    return time_slice;
 }
 
 bool TCB::is_finished() const {

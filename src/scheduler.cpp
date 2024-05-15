@@ -10,6 +10,7 @@ void Scheduler::put(TCB *thread) {
         tail_ready = thread;
     }
     else head_ready = tail_ready = thread;
+    thread -> set_next_ready(nullptr);
 }
 
 TCB* Scheduler::get() {
