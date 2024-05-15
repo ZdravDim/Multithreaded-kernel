@@ -20,6 +20,7 @@ private:
     thread_t myHandle;
     void (*body)(void*);
     void* arg;
+    static void start_helper(void *args);
 };
 
 class Semaphore {

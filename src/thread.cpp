@@ -89,6 +89,14 @@ void TCB::operator delete(void *addr) {
     MemoryAllocator::mem_free(addr);
 }
 
+void *TCB::operator new[](size_t size) {
+    return MemoryAllocator::mem_alloc(MemoryAllocator::get_number_of_blocks(size));
+}
+
+void TCB::operator delete[](void *addr) {
+    MemoryAllocator::mem_free(addr);
+}
+
 time_t TCB::get_time_slice() const {
     return time_slice;
 }

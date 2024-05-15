@@ -14,12 +14,24 @@ Thread::Thread(void (*body)(void *), void *arg) {
     this -> arg = arg;
 }
 
+Thread::Thread() {
+    myHandle = nullptr;
+    body = nullptr;
+    arg = nullptr;
+}
+
 Thread::~Thread() {
     if (myHandle -> is_finished()) delete myHandle;
 }
 
+void Thread::start_helper(void *args) {
+    auto* thread = (Thread*) args;
+    if (!thread -> body) thread -> run();
+    else thread -> body(args);
+}
+
 int Thread::start() {
-    return thread_create(&myHandle, body, arg);
+    return thread_create(&myHandle, start_helper, this);
 }
 
 void Thread::dispatch() {
@@ -28,12 +40,6 @@ void Thread::dispatch() {
 
 int Thread::sleep(time_t time) {
     return time_sleep(time);
-}
-
-Thread::Thread() {
-    myHandle = nullptr;
-    body = nullptr;
-    arg = nullptr;
 }
 
 Semaphore::Semaphore(unsigned int init) {

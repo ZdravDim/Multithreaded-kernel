@@ -30,65 +30,8 @@ void RiscV::handle_supervisor_trap() {
 
     uint64 scause = read_scause();
 
-    /// interrupt caused by Timer
-    if (scause == SOFTWARE_INTERRUPT) {
-
-        /// set SSIP bit to 0 (interrupt finished)
-        mc_sip(SIP_SSIP);
-        /// wake up threads who slept
-        TCB* first_waiting = Scheduler::head_sleeping;
-        if (first_waiting) {
-            --first_waiting -> time_to_sleep;
-            while (first_waiting && first_waiting -> time_to_sleep <= 0) {
-                Scheduler::put(first_waiting);
-                first_waiting -> status = TCB::RUNNABLE;
-                TCB* tmp = first_waiting;
-                first_waiting = first_waiting -> next_sleeping;
-                tmp -> next_sleeping = nullptr;
-                Scheduler::head_sleeping = first_waiting;
-            }
-        }
-
-        ++TCB::time_slice_counter;
-
-        /// time slice ran out
-        if (TCB::time_slice_counter >= TCB::running -> time_slice) {
-            uint64 sepc = read_sepc();
-            uint64 sstatus = read_sstatus();
-            TCB::time_slice_counter = 0;
-            TCB::dispatch();
-            write_sstatus(sstatus);
-            write_sepc(sepc);
-        }
-    }
-
-    /// External interrupt (Console)
-    else if (scause == HARDWARE_INTERRUPT) {
-        uint64 sepc = read_sepc();
-        uint64 sstatus = read_sstatus();
-        int irq = plic_claim();
-        if (irq == CONSOLE_IRQ) {
-            /// Maybe add constraint, limit nubmer of input chars to read
-            while (*(char *) CONSOLE_STATUS & CONSOLE_RX_STATUS_BIT) {
-                char c = *(char *) CONSOLE_RX_DATA;
-                Con::putc_input(c);
-            }
-        }
-        plic_complete(irq);
-        write_sepc(sepc);
-        write_sstatus(sstatus);
-        mc_sip(SIP_SEIP);
-    }
-
-    /// illegal instruction
-    else if (scause == INVALID_INTERRUPT) {
-        uint64 val = 1;
-        __asm__ volatile("mv a0, %0" : : "r"(val));
-        return;
-    }
-
     /// interrupt from supervisor / user mode
-    else if (scause == USER_INTERRUPT || scause == SUPERVISOR_INTERRUPT) {
+    if (scause == USER_INTERRUPT || scause == SUPERVISOR_INTERRUPT) {
 
         uint64 sepc = read_sepc() + 4;
         uint64 sstatus = read_sstatus();
@@ -142,5 +85,62 @@ void RiscV::handle_supervisor_trap() {
 
         write_sepc(sepc);
         write_sstatus(sstatus);
+    }
+
+    /// interrupt caused by Timer
+    else if (scause == SOFTWARE_INTERRUPT) {
+
+        /// set SSIP bit to 0 (interrupt finished)
+        mc_sip(SIP_SSIP);
+        /// wake up threads who slept
+        TCB* first_waiting = Scheduler::head_sleeping;
+        if (first_waiting) {
+            --first_waiting -> time_to_sleep;
+            while (first_waiting && first_waiting -> time_to_sleep <= 0) {
+                Scheduler::put(first_waiting);
+                first_waiting -> status = TCB::RUNNABLE;
+                TCB* tmp = first_waiting;
+                first_waiting = first_waiting -> next_sleeping;
+                tmp -> next_sleeping = nullptr;
+                Scheduler::head_sleeping = first_waiting;
+            }
+        }
+
+        ++TCB::time_slice_counter;
+
+        /// time slice ran out
+        if (TCB::time_slice_counter >= TCB::running -> time_slice) {
+            uint64 sepc = read_sepc();
+            uint64 sstatus = read_sstatus();
+            TCB::time_slice_counter = 0;
+            TCB::dispatch();
+            write_sstatus(sstatus);
+            write_sepc(sepc);
+        }
+    }
+
+    /// External interrupt (Console)
+    else if (scause == HARDWARE_INTERRUPT) {
+        uint64 sepc = read_sepc();
+        uint64 sstatus = read_sstatus();
+        int irq = plic_claim();
+        if (irq == CONSOLE_IRQ) {
+            /// Maybe add constraint, limit nubmer of input chars to read
+            while (*(char *) CONSOLE_STATUS & CONSOLE_RX_STATUS_BIT) {
+                char c = *(char *) CONSOLE_RX_DATA;
+                Con::putc_input(c);
+            }
+        }
+        plic_complete(irq);
+        write_sepc(sepc);
+        write_sstatus(sstatus);
+        mc_sip(SIP_SEIP);
+    }
+
+    /// illegal instruction
+    else if (scause == INVALID_INTERRUPT) {
+        uint64 val = 1;
+        __asm__ volatile("mv a0, %0" : : "r"(val));
+        return;
     }
 }

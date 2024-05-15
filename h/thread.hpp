@@ -30,6 +30,8 @@ public:
 
     void* operator new(size_t size);
     void operator delete(void* addr);
+    void* operator new[](size_t size);
+    void operator delete[](void *ptr);
 
     bool is_finished() const;
 
