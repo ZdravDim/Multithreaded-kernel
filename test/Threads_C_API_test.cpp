@@ -91,7 +91,7 @@ static void workerBodyD(void* arg) {
 
 
 void Threads_C_API_test() {
-    static thread_t threads[4];
+    thread_t threads[4];
     thread_create(&threads[0], workerBodyA, nullptr);
     printString("ThreadA created\n");
 

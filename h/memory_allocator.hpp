@@ -23,7 +23,7 @@ public:
     static void print();
 private:
     MemoryAllocator() = default;
-    static void removeNode(MemSeg *toRemove, MemSeg *nextSeg, bool newIsCreated);
+    static void removeNode(MemSeg *toRemove, MemSeg *nextSeg, bool newIsCreated, bool free_list);
     static void tryToJoin(MemSeg *seg);
     static MemoryAllocator* instance;
     static MemSeg* freeSegHead;

@@ -20,9 +20,9 @@ void MemoryAllocator::initialize() {
 }
 
 /// helper function for removing element from linked list
-void MemoryAllocator::removeNode(MemSeg *toRemove, MemSeg *nextSeg, bool newIsCreated) {
+void MemoryAllocator::removeNode(MemSeg *toRemove, MemSeg *nextSeg, bool newIsCreated, bool free_list) {
     if (toRemove -> prev) toRemove -> prev -> next = nextSeg;
-    else freeSegHead = nextSeg;
+    else (free_list ? freeSegHead : usedSegHead) = nextSeg;
     if (toRemove -> next) toRemove -> next -> prev = (newIsCreated) ? nextSeg : toRemove -> prev;
 }
 
@@ -38,13 +38,13 @@ void *MemoryAllocator::mem_alloc(size_t size) {
         }
         /// update free memory list
         size_t remaining = tmp -> size - bytesToAllocate;
-        if (remaining <= sizeof(MemSeg)) removeNode(tmp, tmp->next, false);
+        if (remaining <= sizeof(MemSeg)) removeNode(tmp, tmp->next, false, true);
         else {
             MemSeg* newFree = (MemSeg*) ((char*) tmp + bytesToAllocate);
             newFree -> prev = tmp -> prev;
             newFree -> next = tmp -> next;
             newFree -> size = remaining;
-            removeNode(tmp, newFree, true);
+            removeNode(tmp, newFree, true, true);
         }
 
         /// update used memory list
@@ -78,8 +78,10 @@ int MemoryAllocator::mem_free(void *addr) {
             break;
         }
     if (!found) return -3;
-    removeNode(segToFree, segToFree -> next, false);
+    removeNode(segToFree, segToFree -> next, false, false);
     /// update free memory list
+    /// increase size (used segment size = free segment size - header size)
+    segToFree -> size += sizeof(MemSeg);
     /// empty list case
     if (!freeSegHead) {
         freeSegHead = segToFree;
@@ -93,7 +95,7 @@ int MemoryAllocator::mem_free(void *addr) {
         freeSegHead = segToFree;
         tryToJoin(segToFree);
     }
-    /// iterate list to find where to insert
+    /// iterate list to find where to insert (after tmp)
     else {
         MemSeg *tmp;
         for (tmp = freeSegHead; tmp -> next && (char*) (tmp -> next) < (char*) segToFree; tmp = tmp -> next);
