@@ -27,11 +27,14 @@ void RiscV::handle_supervisor_trap() {
     __asm__ volatile("mv %0, a3" : "=r"(a3));
     __asm__ volatile("mv %0, a4" : "=r"(a4));
 
+    /// read scause register value
     uint64 scause = read_scause();
 
     /// interrupt from supervisor / user mode
     if (scause == USER_INTERRUPT || scause == SUPERVISOR_INTERRUPT) {
 
+        /// ecall causes sepc register to be set to ecall instruction itself, not the following instruction
+        /// so to avoid infinite recursion increase sepc by 4 to point to the following instruction
         uint64 sepc = read_sepc() + 4;
         uint64 sstatus = read_sstatus();
 
@@ -136,7 +139,7 @@ void RiscV::handle_supervisor_trap() {
         mc_sip(SIP_SEIP);
     }
 
-    /// illegal instruction
+    /// Illegal instruction / Bad memory access
     else {
         printNumber(scause);
         __putc('!');
@@ -144,6 +147,5 @@ void RiscV::handle_supervisor_trap() {
         __putc('!');
         uint64 val = 1;
         __asm__ volatile("mv a0, %0" : : "r"(val));
-        return;
     }
 }
