@@ -35,6 +35,15 @@ void kernelConsoleOutput(void *args) {
     }
 }
 
+sem_t sem;
+
+[[noreturn]] void workerA(void*) {
+    while (true) {
+        sem_timedwait(sem, 10);
+        putc('A');
+    }
+}
+
 void userMain();
 void userMainWrapper(void *args) {
     userMain();
@@ -56,9 +65,12 @@ int main() {
     RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
 
     thread_create(&threads[1], kernelConsoleOutput, nullptr);
+    thread_create(&threads[2], workerA, nullptr);
+
+    sem_open(&sem, 1);
 
     /// Test Everything
-    thread_create(&threads[2], userMainWrapper, nullptr);
+//    thread_create(&threads[2], userMainWrapper, nullptr);
     while (true) thread_dispatch();
 
     return 0;

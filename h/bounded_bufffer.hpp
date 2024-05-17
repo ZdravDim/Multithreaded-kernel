@@ -1,5 +1,5 @@
-#ifndef buffer
-#define buffer
+#ifndef define_bounded_buffer
+#define define_bounded_buffer
 
 #include "../lib/hw.h"
 #include "memory_allocator.hpp"

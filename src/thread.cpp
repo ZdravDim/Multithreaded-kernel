@@ -18,20 +18,24 @@ TCB::TCB(void (*function_body)(void *), void *arg, void *stack) {
             (uint64) (stack ? (uint64) stack + DEFAULT_STACK_SIZE - 1 : 0)
     };
     id = cnt++;
+    time_slice = DEFAULT_TIME_SLICE;
     status = RUNNABLE;
     this -> function_body = function_body;
     this -> arg = arg;
     this -> stack = stack;
-    time_slice = DEFAULT_TIME_SLICE;
+    timed_wait = false;
     time_to_sleep = 0;
     next_ready = nullptr;
     next_sleeping = nullptr;
+    sem = nullptr;
     if (function_body) Scheduler::put(this);
 }
 
-void TCB::thread_exit() {
+int TCB::thread_exit() {
+    if (!running) return -1;
     running -> set_status(Status::FINISHED);
     thread_dispatch();
+    return 0;
 }
 
 void TCB::wrapper_function() {
@@ -101,4 +105,13 @@ void TCB::operator delete[](void *addr) {
 
 bool TCB::is_finished() const {
     return status == FINISHED;
+}
+
+void TCB::clear_from_timed_wait(bool removed_from_timer) {
+    if (removed_from_timer) {
+        sem -> blocked_threads -> remove(this);
+        ++sem -> value;
+    }
+    timed_wait = false;
+    sem = nullptr;
 }

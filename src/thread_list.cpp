@@ -18,8 +18,29 @@ TCB *ThreadList::remove_first() {
     return thread;
 }
 
+int ThreadList::remove(TCB *thread) {
+    if (!thread) return -1;
+    Node *tmp = head, *prev = nullptr;
+    while (tmp && tmp -> data != thread) {
+        prev = tmp;
+        tmp = tmp -> next;
+    }
+    if (!tmp) return -2;
+    if (prev) prev -> next = tmp -> next;
+    else head = tmp;
+    return 0;
+}
+
 void ThreadList::free() {
     while (get_first()) remove_first();
+}
+
+void *ThreadList::operator new(size_t size) {
+    return MemoryAllocator::mem_alloc(MemoryAllocator::get_number_of_blocks(size));
+}
+
+void ThreadList::operator delete(void *addr) {
+    MemoryAllocator::mem_free(addr);
 }
 
 void *ThreadList::Node::operator new(size_t size) {

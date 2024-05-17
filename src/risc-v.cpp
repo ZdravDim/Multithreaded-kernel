@@ -98,6 +98,7 @@ void RiscV::handle_supervisor_trap() {
         if (first_waiting) {
             --first_waiting -> time_to_sleep;
             while (first_waiting && first_waiting -> time_to_sleep == 0) {
+                if (first_waiting -> timed_wait) first_waiting -> clear_from_timed_wait(true);
                 Scheduler::put(first_waiting);
                 first_waiting -> status = TCB::RUNNABLE;
                 TCB* tmp = first_waiting;

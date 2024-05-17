@@ -1,5 +1,5 @@
-#ifndef console
-#define console
+#ifndef define_console
+#define define_console
 
 #include "bounded_bufffer.hpp"
 

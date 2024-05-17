@@ -1,5 +1,5 @@
-#ifndef riscv
-#define riscv
+#ifndef define_riscv
+#define define_riscv
 
 #include "../h/syscall_c.hpp"
 #include "../h/memory_allocator.hpp"

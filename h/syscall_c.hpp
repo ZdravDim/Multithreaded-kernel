@@ -1,5 +1,5 @@
-#ifndef syscall_c
-#define syscall_c
+#ifndef define_syscall_c
+#define define_syscall_c
 
 #include "../lib/hw.h"
 #include "thread.hpp"

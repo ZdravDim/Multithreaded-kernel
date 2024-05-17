@@ -1,14 +1,20 @@
-#ifndef thread_list
-#define thread_list
+#ifndef define_thread_list
+#define define_thread_list
 
 #include "thread.hpp"
+
+class TCB;
 
 class ThreadList {
 public:
     void push_back(TCB* thread);
     TCB* get_first();
     TCB* remove_first();
+    int remove(TCB* thread);
     void free();
+
+    void* operator new(size_t size);
+    void operator delete(void* addr);
 
 private:
 

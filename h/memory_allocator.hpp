@@ -1,5 +1,5 @@
-#ifndef memoryAllocator
-#define memoryAllocator
+#ifndef define_memory_allocator
+#define define_memory_allocator
 
 #include "../lib/hw.h"
 #include "../lib/console.h"

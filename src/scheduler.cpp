@@ -1,4 +1,5 @@
 #include "../h/scheduler.hpp"
+#include "../h/thread.hpp"
 
 TCB* Scheduler::head_ready = nullptr;
 TCB* Scheduler::tail_ready = nullptr;
@@ -61,9 +62,27 @@ int Scheduler::put_to_sleep(time_t time) {
     return 0;
 }
 
+int Scheduler::remove_from_sleep(TCB *thread) {
+    if (!thread) return -1;
+    TCB *prev = nullptr, *tmp = head_sleeping;
+    while (tmp && tmp != thread) {
+        prev = tmp;
+        tmp = tmp -> next_sleeping;
+    }
+    if (!tmp) return -2;
+    if (prev) prev -> next_sleeping = tmp -> next_sleeping;
+    else head_sleeping = tmp -> next_sleeping;
+    if (tmp -> next_sleeping) tmp -> next_sleeping -> time_to_sleep += tmp -> time_to_sleep;
+    tmp -> next_sleeping = nullptr;
+    return 0;
+}
+
 void Scheduler::change_thread() {
     TCB* old = TCB::running;
     old -> set_status(TCB::SLEEPING);
-    TCB::running = Scheduler::get();
-    if (old != TCB::running) TCB::yield(old, TCB::running);
+    if (!old-> timed_wait) {
+        TCB::running = Scheduler::get();
+        if (old != TCB::running) TCB::yield(old, TCB::running);
+    }
 }
+

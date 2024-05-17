@@ -1,8 +1,9 @@
-#ifndef scheduler
-#define scheduler
+#ifndef define_scheduler
+#define define_scheduler
 
-#include "thread.hpp"
-#include "thread_list.hpp"
+#include "../lib/hw.h"
+
+class TCB;
 
 class Scheduler {
 
@@ -12,6 +13,7 @@ public:
     static void put(TCB* thread);
     static TCB* get();
     static int put_to_sleep(time_t time);
+    static int remove_from_sleep(TCB* thread);
 
     Scheduler(Scheduler &) = delete;
     Scheduler() = delete;

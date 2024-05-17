@@ -1,17 +1,21 @@
-#ifndef c_thread
-#define c_thread
+#ifndef define_thread
+#define define_thread
 
 #include "../lib/hw.h"
-#include "../h/memory_allocator.hpp"
+#include "memory_allocator.hpp"
+#include "semaphore.hpp"
 
 [[noreturn]] void kernelConsoleOutput(void *args);
 
+class Sem;
 class TCB;
 typedef TCB* thread_t;
 
 class TCB {
 
     friend class RiscV;
+    friend class Sem;
+    friend class Scheduler;
 
 public:
     struct Context {
@@ -23,7 +27,7 @@ public:
 
     static int thread_create(thread_t *handle, void(*start_routine)(void *), void *arg, void *stack_begin_address);
     static void wrapper_function();
-    static void thread_exit();
+    static int thread_exit();
     static void dispatch();
     static void yield(TCB* old_running, TCB* new_running);
     static void context_switch(Context* old_context, Context* new_context);
@@ -48,18 +52,23 @@ public:
 private:
     TCB(void (*function_body)(void*), void *arg, void *stack);
 
+    void clear_from_timed_wait(bool removed_from_timer);
+
     static int cnt; /// global thread counter
+    static time_t time_slice_counter; /// time spent on currently running thread
+    time_t time_slice; /// time given for executing (currently equal for every thread)
+
     int id; /// thread identification
     Context context; /// current thread context
     Status status; /// thread status
     void (*function_body)(void*); /// thread function to execute
     void* arg; /// function arguments
     void* stack; /// thread stack
-    static time_t time_slice_counter; /// time spent on currently running thread
-    time_t time_slice; /// time given for executing
     TCB* next_ready; /// Scheduler ready list
+    bool timed_wait;
     time_t time_to_sleep; /// not actual time, but time to sleep when this TCB becomes first in the list
     TCB* next_sleeping; /// Scheduler sleeping list
+    Sem* sem; /// Semaphore where this thread is waiting
 };
 
 #endif
