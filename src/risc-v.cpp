@@ -91,14 +91,13 @@ void RiscV::handle_supervisor_trap() {
 
     /// interrupt caused by Timer
     else if (scause == SOFTWARE_INTERRUPT) {
-
         /// set SSIP bit to 0 (interrupt finished)
         mc_sip(SIP_SSIP);
         /// wake up threads who slept
         TCB* first_waiting = Scheduler::head_sleeping;
         if (first_waiting) {
             --first_waiting -> time_to_sleep;
-            while (first_waiting && first_waiting -> time_to_sleep <= 0) {
+            while (first_waiting && first_waiting -> time_to_sleep == 0) {
                 Scheduler::put(first_waiting);
                 first_waiting -> status = TCB::RUNNABLE;
                 TCB* tmp = first_waiting;

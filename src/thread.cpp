@@ -49,7 +49,7 @@ void TCB::yield(TCB *old_running, TCB *new_running) {
 void TCB::dispatch() {
     TCB* old = running;
     if (old -> status == RUNNABLE) Scheduler::put(old);
-//    else if (old -> status == FINISHED) MemoryAllocator::mem_free(old -> stack);
+    else if (old -> status == FINISHED) MemoryAllocator::mem_free(old -> stack);
     running = Scheduler::get();
     time_slice_counter = 0;
     if (old != running) yield(old, running);

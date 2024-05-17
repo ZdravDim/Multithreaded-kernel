@@ -30,38 +30,14 @@ void kernelConsoleOutput(void *args) {
             char c = Con::getc_output();
             *(char *) CONSOLE_TX_DATA = c;
         }
+        /// if there isn't ready data, dispatch in order not to occupy CPU for the DEFAULT_TIME_SLICE
+        thread_dispatch();
     }
 }
 
 void userMain();
 void userMainWrapper(void *args) {
     userMain();
-}
-
-void workerA(void*) {
-    for (int i = 0; i < 4; ++i) {
-        printNumber(i);
-        __putc('(');
-        __putc('A');
-        __putc(')');
-        for (int j = 0; j < 10000; ++j) {
-            for (int k = 0; k < 30000; ++k) {}
-            thread_dispatch();
-        }
-    }
-}
-
-void workerB(void*) {
-    for (int i = 0; i < 16; ++i) {
-        printNumber(i);
-        __putc('(');
-        __putc('B');
-        __putc(')');
-        for (int j = 0; j < 10000; ++j) {
-            for (int k = 0; k < 30000; ++k) {}
-            thread_dispatch();
-        }
-    }
 }
 
 int main() {

@@ -23,6 +23,7 @@ TCB* Scheduler::get() {
 }
 
 int Scheduler::put_to_sleep(time_t time) {
+    if (!time) return -1;
     TCB* thread = TCB::running;
     /// empty list case
     if (!head_sleeping) {
@@ -39,7 +40,7 @@ int Scheduler::put_to_sleep(time_t time) {
     while (tmp) {
         current_time += tmp -> get_time_to_sleep();
         if (current_time > time) {
-            /// found a place to insert
+            /// found a place to insert (before tmp)
             time_t new_time = time - (current_time - tmp -> get_time_to_sleep());
             thread -> set_time_to_sleep(new_time);
             thread -> set_next_sleeping(tmp);
