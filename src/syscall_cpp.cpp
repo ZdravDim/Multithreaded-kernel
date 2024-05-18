@@ -27,7 +27,7 @@ Thread::~Thread() {
 void Thread::start_helper(void *args) {
     auto* thread = (Thread*) args;
     if (!thread -> body) thread -> run();
-    else thread -> body(args);
+    else thread -> body(thread -> arg);
 }
 
 int Thread::start() {
@@ -70,11 +70,19 @@ int Semaphore::tryWait() {
 }
 
 void PeriodicThread::terminate() {
-    /// TODO terminate
+    thread_exit();
 }
 
-PeriodicThread::PeriodicThread(time_t period) {
-    this -> period = period;
+PeriodicThread::PeriodicThread(time_t period) : Thread() {
+    if (period <= 0) period = DEFAULT_TIME_SLICE;
+    else this -> period = period;
+}
+
+[[noreturn]] void PeriodicThread::run() {
+    while (true) {
+        periodicActivation();
+        time_sleep(period);
+    }
 }
 
 char Console::getc() {

@@ -1,6 +1,7 @@
 #include "../lib/console.h"
 #include "../h/memory_allocator.hpp"
 #include "../h/risc-v.hpp"
+#include "../h/syscall_cpp.hpp"
 
 /// helper function
 void printNumber(uint64 num) {
@@ -35,19 +36,22 @@ void kernelConsoleOutput(void *args) {
     }
 }
 
-sem_t sem;
-
-[[noreturn]] void workerA(void*) {
-    while (true) {
-        sem_timedwait(sem, 10);
-        putc('A');
-    }
-}
-
 void userMain();
 void userMainWrapper(void *args) {
     userMain();
 }
+
+class PeriodicWorker : public PeriodicThread {
+public:
+    int value = 10;
+
+    explicit PeriodicWorker() : PeriodicThread(4) {}
+
+    void periodicActivation() override {
+        printNumber(value--);
+        if (value < 0) terminate();
+    }
+};
 
 int main() {
     /// Set interrupt routine handler
@@ -65,9 +69,9 @@ int main() {
     RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
 
     thread_create(&threads[1], kernelConsoleOutput, nullptr);
-    thread_create(&threads[2], workerA, nullptr);
 
-    sem_open(&sem, 1);
+    Thread *periodic = new PeriodicWorker();
+    periodic -> start();
 
     /// Test Everything
 //    thread_create(&threads[2], userMainWrapper, nullptr);
