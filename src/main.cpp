@@ -5,11 +5,11 @@
 
 /// helper function
 void printNumber(uint64 num) {
-    __putc('\n');
-    __putc('N');
-    __putc(':');
-    __putc(' ');
-    if (!num) __putc('0');
+    putc('\n');
+    putc('N');
+    putc(':');
+    putc(' ');
+    if (!num) putc('0');
     uint64 num2 = 0, zero_count = 0;
     while (num) {
         num2 *= 10;
@@ -18,10 +18,10 @@ void printNumber(uint64 num) {
         num /= 10;
     }
     while (num2) {
-        __putc(num2 % 10 + '0');
+        putc(num2 % 10 + '0');
         num2 /= 10;
     }
-    while (zero_count--) __putc('0');
+    while (zero_count--) putc('0');
 }
 /// kernel thread used for sending chars to console controller
 void kernelConsoleOutput(void *args) {
@@ -53,26 +53,41 @@ public:
     }
 };
 
+[[noreturn]] void tester(void*) {
+    while (true) {
+        char c1 = getc();
+        char c2 = getc();
+        char c3 = getc();
+        putc(c1);
+        putc(c2);
+        putc(c3);
+    }
+}
+
 int main() {
     /// Set interrupt routine handler
     RiscV::write_stvec((uint64) &RiscV::handle_interrupt);
+
     /// Initialization
     MemoryAllocator::initialize();
     Con::initialize();
 
-    thread_t threads[4];
+    thread_t threads[3];
 
+    /// Main Thread
     thread_create(&threads[0], nullptr, nullptr);
     TCB::running = threads[0];
 
     /// Enable external interrupts
     RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
 
+    /// Kernel Thread for console output
     thread_create(&threads[1], kernelConsoleOutput, nullptr);
 
-    Thread *periodic = new PeriodicWorker();
-    periodic -> start();
-
+    /// Test Periodic Thread
+//    Thread *periodic = new PeriodicWorker();
+//    periodic -> start();
+    thread_create(&threads[2], tester, nullptr);
     /// Test Everything
 //    thread_create(&threads[2], userMainWrapper, nullptr);
     while (true) thread_dispatch();

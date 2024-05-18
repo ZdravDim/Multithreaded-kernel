@@ -107,6 +107,7 @@ bool TCB::is_finished() const {
     return status == FINISHED;
 }
 
+/// reset state after timed wait
 void TCB::clear_from_timed_wait(bool removed_from_timer) {
     if (removed_from_timer) {
         sem -> blocked_threads -> remove(this);

@@ -1,4 +1,5 @@
 #include "../h/memory_allocator.hpp"
+#include "../h/console.hpp"
 
 void printNumber(uint64 num);
 
@@ -119,20 +120,20 @@ void MemoryAllocator::tryToJoin(MemSeg *seg) {
 }
 
 void MemoryAllocator::print() {
-    __putc('\n');
-    __putc('M');
-    __putc(':');
-    __putc(' ');
+    putc('\n');
+    putc('M');
+    putc(':');
+    putc(' ');
     for (MemSeg* tmp = freeSegHead; tmp; tmp = tmp -> next) {
         printNumber(tmp -> size);
-        __putc(' ');
-        __putc('f');
+        putc(' ');
+        putc('f');
     }
-    __putc('\t');
+    putc('\t');
     for (MemSeg* tmp = usedSegHead; tmp; tmp = tmp -> next) {
         printNumber(tmp -> size);
-        __putc(' ');
-        __putc('u');
+        putc(' ');
+        putc('u');
     }
 }
 

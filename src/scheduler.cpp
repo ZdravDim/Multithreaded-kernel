@@ -23,6 +23,7 @@ TCB* Scheduler::get() {
     return tmp;
 }
 
+/// put thread to sleeping list
 int Scheduler::put_to_sleep(time_t time) {
     if (!time) return -1;
     TCB* thread = TCB::running;
@@ -62,6 +63,7 @@ int Scheduler::put_to_sleep(time_t time) {
     return 0;
 }
 
+/// remove thread from sleeping list (used for timed wait)
 int Scheduler::remove_from_sleep(TCB *thread) {
     if (!thread) return -1;
     TCB *prev = nullptr, *tmp = head_sleeping;
@@ -77,6 +79,7 @@ int Scheduler::remove_from_sleep(TCB *thread) {
     return 0;
 }
 
+/// dispatch, without putting running back in scheduler
 void Scheduler::change_thread() {
     TCB* old = TCB::running;
     old -> set_status(TCB::SLEEPING);

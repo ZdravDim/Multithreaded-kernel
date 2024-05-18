@@ -142,9 +142,9 @@ void RiscV::handle_supervisor_trap() {
     /// Illegal instruction / Bad memory access
     else {
         printNumber(scause);
-        __putc('!');
-        __putc('?');
-        __putc('!');
+        putc('!');
+        putc('?');
+        putc('!');
         uint64 val = 1;
         __asm__ volatile("mv a0, %0" : : "r"(val));
     }
