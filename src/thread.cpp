@@ -34,14 +34,14 @@ TCB::TCB(void (*function_body)(void *), void *arg, void *stack) {
 int TCB::thread_exit() {
     if (!running) return -1;
     running -> set_status(Status::FINISHED);
-    thread_dispatch();
+    dispatch();
     return 0;
 }
 
 void TCB::wrapper_function() {
     RiscV::popSppSpie();
     if (running -> function_body) running -> function_body(running -> arg);
-    thread_exit();
+    ::thread_exit();
 }
 
 void TCB::yield(TCB *old_running, TCB *new_running) {

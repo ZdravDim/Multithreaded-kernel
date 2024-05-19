@@ -87,9 +87,9 @@ int main() {
     /// Test Periodic Thread
 //    Thread *periodic = new PeriodicWorker();
 //    periodic -> start();
-    thread_create(&threads[2], tester, nullptr);
+//    thread_create(&threads[2], tester, nullptr);
     /// Test Everything
-//    thread_create(&threads[2], userMainWrapper, nullptr);
+    thread_create(&threads[2], userMainWrapper, nullptr);
     while (true) thread_dispatch();
 
     return 0;

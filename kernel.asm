@@ -740,7 +740,7 @@ void Sem::block() {
     TCB::yield(old, TCB::running);
     800017a0:	00048513          	mv	a0,s1
     800017a4:	00002097          	auipc	ra,0x2
-    800017a8:	d08080e7          	jalr	-760(ra) # 800034ac <_ZN3TCB5yieldEPS_S0_>
+    800017a8:	d50080e7          	jalr	-688(ra) # 800034f4 <_ZN3TCB5yieldEPS_S0_>
 }
     800017ac:	01813083          	ld	ra,24(sp)
     800017b0:	01013403          	ld	s0,16(sp)
@@ -1087,145 +1087,148 @@ void kernelConsoleOutput(void *args) {
     }
     80001b70:	fe1ff06f          	j	80001b50 <_Z19kernelConsoleOutputPv+0x2c>
 
-0000000080001b74 <_Z6testerPv>:
+0000000080001b74 <_Z15userMainWrapperPv>:
+}
+
+void userMain();
+void userMainWrapper(void *args) {
+    80001b74:	ff010113          	addi	sp,sp,-16
+    80001b78:	00113423          	sd	ra,8(sp)
+    80001b7c:	00813023          	sd	s0,0(sp)
+    80001b80:	01010413          	addi	s0,sp,16
+    userMain();
+    80001b84:	00005097          	auipc	ra,0x5
+    80001b88:	ba0080e7          	jalr	-1120(ra) # 80006724 <_Z8userMainv>
+}
+    80001b8c:	00813083          	ld	ra,8(sp)
+    80001b90:	00013403          	ld	s0,0(sp)
+    80001b94:	01010113          	addi	sp,sp,16
+    80001b98:	00008067          	ret
+
+0000000080001b9c <_Z11printNumberm>:
+void printNumber(uint64 num) {
+    80001b9c:	fd010113          	addi	sp,sp,-48
+    80001ba0:	02113423          	sd	ra,40(sp)
+    80001ba4:	02813023          	sd	s0,32(sp)
+    80001ba8:	00913c23          	sd	s1,24(sp)
+    80001bac:	01213823          	sd	s2,16(sp)
+    80001bb0:	01313423          	sd	s3,8(sp)
+    80001bb4:	03010413          	addi	s0,sp,48
+    80001bb8:	00050913          	mv	s2,a0
+    putc('\n');
+    80001bbc:	00a00513          	li	a0,10
+    80001bc0:	00000097          	auipc	ra,0x0
+    80001bc4:	aac080e7          	jalr	-1364(ra) # 8000166c <_Z4putcc>
+    putc('N');
+    80001bc8:	04e00513          	li	a0,78
+    80001bcc:	00000097          	auipc	ra,0x0
+    80001bd0:	aa0080e7          	jalr	-1376(ra) # 8000166c <_Z4putcc>
+    putc(':');
+    80001bd4:	03a00513          	li	a0,58
+    80001bd8:	00000097          	auipc	ra,0x0
+    80001bdc:	a94080e7          	jalr	-1388(ra) # 8000166c <_Z4putcc>
+    putc(' ');
+    80001be0:	02000513          	li	a0,32
+    80001be4:	00000097          	auipc	ra,0x0
+    80001be8:	a88080e7          	jalr	-1400(ra) # 8000166c <_Z4putcc>
+    if (!num) putc('0');
+    80001bec:	00090863          	beqz	s2,80001bfc <_Z11printNumberm+0x60>
+    uint64 num2 = 0, zero_count = 0;
+    80001bf0:	00000993          	li	s3,0
+    80001bf4:	00000493          	li	s1,0
+    80001bf8:	01c0006f          	j	80001c14 <_Z11printNumberm+0x78>
+    if (!num) putc('0');
+    80001bfc:	03000513          	li	a0,48
+    80001c00:	00000097          	auipc	ra,0x0
+    80001c04:	a6c080e7          	jalr	-1428(ra) # 8000166c <_Z4putcc>
+    80001c08:	fe9ff06f          	j	80001bf0 <_Z11printNumberm+0x54>
+        num /= 10;
+    80001c0c:	00a00793          	li	a5,10
+    80001c10:	02f95933          	divu	s2,s2,a5
+    while (num) {
+    80001c14:	02090463          	beqz	s2,80001c3c <_Z11printNumberm+0xa0>
+        num2 *= 10;
+    80001c18:	00249793          	slli	a5,s1,0x2
+    80001c1c:	009784b3          	add	s1,a5,s1
+    80001c20:	00149793          	slli	a5,s1,0x1
+        num2 += num % 10;
+    80001c24:	00a00493          	li	s1,10
+    80001c28:	029974b3          	remu	s1,s2,s1
+    80001c2c:	00f484b3          	add	s1,s1,a5
+        if (!num2) ++zero_count;
+    80001c30:	fc049ee3          	bnez	s1,80001c0c <_Z11printNumberm+0x70>
+    80001c34:	00198993          	addi	s3,s3,1
+    80001c38:	fd5ff06f          	j	80001c0c <_Z11printNumberm+0x70>
+    while (num2) {
+    80001c3c:	02048063          	beqz	s1,80001c5c <_Z11printNumberm+0xc0>
+        putc(num2 % 10 + '0');
+    80001c40:	00a00913          	li	s2,10
+    80001c44:	0324f533          	remu	a0,s1,s2
+    80001c48:	03050513          	addi	a0,a0,48
+    80001c4c:	00000097          	auipc	ra,0x0
+    80001c50:	a20080e7          	jalr	-1504(ra) # 8000166c <_Z4putcc>
+        num2 /= 10;
+    80001c54:	0324d4b3          	divu	s1,s1,s2
+    while (num2) {
+    80001c58:	fe5ff06f          	j	80001c3c <_Z11printNumberm+0xa0>
+    while (zero_count--) putc('0');
+    80001c5c:	fff98493          	addi	s1,s3,-1
+    80001c60:	00098c63          	beqz	s3,80001c78 <_Z11printNumberm+0xdc>
+    80001c64:	03000513          	li	a0,48
+    80001c68:	00000097          	auipc	ra,0x0
+    80001c6c:	a04080e7          	jalr	-1532(ra) # 8000166c <_Z4putcc>
+    80001c70:	00048993          	mv	s3,s1
+    80001c74:	fe9ff06f          	j	80001c5c <_Z11printNumberm+0xc0>
+}
+    80001c78:	02813083          	ld	ra,40(sp)
+    80001c7c:	02013403          	ld	s0,32(sp)
+    80001c80:	01813483          	ld	s1,24(sp)
+    80001c84:	01013903          	ld	s2,16(sp)
+    80001c88:	00813983          	ld	s3,8(sp)
+    80001c8c:	03010113          	addi	sp,sp,48
+    80001c90:	00008067          	ret
+
+0000000080001c94 <_Z6testerPv>:
         printNumber(value--);
         if (value < 0) terminate();
     }
 };
 
-void tester(void*) {
-    80001b74:	fd010113          	addi	sp,sp,-48
-    80001b78:	02113423          	sd	ra,40(sp)
-    80001b7c:	02813023          	sd	s0,32(sp)
-    80001b80:	00913c23          	sd	s1,24(sp)
-    80001b84:	01213823          	sd	s2,16(sp)
-    80001b88:	01313423          	sd	s3,8(sp)
-    80001b8c:	03010413          	addi	s0,sp,48
-    while (1) {
+[[noreturn]] void tester(void*) {
+    80001c94:	fd010113          	addi	sp,sp,-48
+    80001c98:	02113423          	sd	ra,40(sp)
+    80001c9c:	02813023          	sd	s0,32(sp)
+    80001ca0:	00913c23          	sd	s1,24(sp)
+    80001ca4:	01213823          	sd	s2,16(sp)
+    80001ca8:	01313423          	sd	s3,8(sp)
+    80001cac:	03010413          	addi	s0,sp,48
+    while (true) {
         char c1 = getc();
-    80001b90:	00000097          	auipc	ra,0x0
-    80001b94:	a90080e7          	jalr	-1392(ra) # 80001620 <_Z4getcv>
-    80001b98:	00050993          	mv	s3,a0
+    80001cb0:	00000097          	auipc	ra,0x0
+    80001cb4:	970080e7          	jalr	-1680(ra) # 80001620 <_Z4getcv>
+    80001cb8:	00050993          	mv	s3,a0
         char c2 = getc();
-    80001b9c:	00000097          	auipc	ra,0x0
-    80001ba0:	a84080e7          	jalr	-1404(ra) # 80001620 <_Z4getcv>
-    80001ba4:	00050913          	mv	s2,a0
+    80001cbc:	00000097          	auipc	ra,0x0
+    80001cc0:	964080e7          	jalr	-1692(ra) # 80001620 <_Z4getcv>
+    80001cc4:	00050913          	mv	s2,a0
         char c3 = getc();
-    80001ba8:	00000097          	auipc	ra,0x0
-    80001bac:	a78080e7          	jalr	-1416(ra) # 80001620 <_Z4getcv>
-    80001bb0:	00050493          	mv	s1,a0
+    80001cc8:	00000097          	auipc	ra,0x0
+    80001ccc:	958080e7          	jalr	-1704(ra) # 80001620 <_Z4getcv>
+    80001cd0:	00050493          	mv	s1,a0
         putc(c1);
-    80001bb4:	00098513          	mv	a0,s3
-    80001bb8:	00000097          	auipc	ra,0x0
-    80001bbc:	ab4080e7          	jalr	-1356(ra) # 8000166c <_Z4putcc>
+    80001cd4:	00098513          	mv	a0,s3
+    80001cd8:	00000097          	auipc	ra,0x0
+    80001cdc:	994080e7          	jalr	-1644(ra) # 8000166c <_Z4putcc>
         putc(c2);
-    80001bc0:	00090513          	mv	a0,s2
-    80001bc4:	00000097          	auipc	ra,0x0
-    80001bc8:	aa8080e7          	jalr	-1368(ra) # 8000166c <_Z4putcc>
+    80001ce0:	00090513          	mv	a0,s2
+    80001ce4:	00000097          	auipc	ra,0x0
+    80001ce8:	988080e7          	jalr	-1656(ra) # 8000166c <_Z4putcc>
         putc(c3);
-    80001bcc:	00048513          	mv	a0,s1
-    80001bd0:	00000097          	auipc	ra,0x0
-    80001bd4:	a9c080e7          	jalr	-1380(ra) # 8000166c <_Z4putcc>
-    while (1) {
-    80001bd8:	fb9ff06f          	j	80001b90 <_Z6testerPv+0x1c>
-
-0000000080001bdc <_Z11printNumberm>:
-void printNumber(uint64 num) {
-    80001bdc:	fd010113          	addi	sp,sp,-48
-    80001be0:	02113423          	sd	ra,40(sp)
-    80001be4:	02813023          	sd	s0,32(sp)
-    80001be8:	00913c23          	sd	s1,24(sp)
-    80001bec:	01213823          	sd	s2,16(sp)
-    80001bf0:	01313423          	sd	s3,8(sp)
-    80001bf4:	03010413          	addi	s0,sp,48
-    80001bf8:	00050913          	mv	s2,a0
-    putc('\n');
-    80001bfc:	00a00513          	li	a0,10
-    80001c00:	00000097          	auipc	ra,0x0
-    80001c04:	a6c080e7          	jalr	-1428(ra) # 8000166c <_Z4putcc>
-    putc('N');
-    80001c08:	04e00513          	li	a0,78
-    80001c0c:	00000097          	auipc	ra,0x0
-    80001c10:	a60080e7          	jalr	-1440(ra) # 8000166c <_Z4putcc>
-    putc(':');
-    80001c14:	03a00513          	li	a0,58
-    80001c18:	00000097          	auipc	ra,0x0
-    80001c1c:	a54080e7          	jalr	-1452(ra) # 8000166c <_Z4putcc>
-    putc(' ');
-    80001c20:	02000513          	li	a0,32
-    80001c24:	00000097          	auipc	ra,0x0
-    80001c28:	a48080e7          	jalr	-1464(ra) # 8000166c <_Z4putcc>
-    if (!num) putc('0');
-    80001c2c:	00090863          	beqz	s2,80001c3c <_Z11printNumberm+0x60>
-    uint64 num2 = 0, zero_count = 0;
-    80001c30:	00000993          	li	s3,0
-    80001c34:	00000493          	li	s1,0
-    80001c38:	01c0006f          	j	80001c54 <_Z11printNumberm+0x78>
-    if (!num) putc('0');
-    80001c3c:	03000513          	li	a0,48
-    80001c40:	00000097          	auipc	ra,0x0
-    80001c44:	a2c080e7          	jalr	-1492(ra) # 8000166c <_Z4putcc>
-    80001c48:	fe9ff06f          	j	80001c30 <_Z11printNumberm+0x54>
-        num /= 10;
-    80001c4c:	00a00793          	li	a5,10
-    80001c50:	02f95933          	divu	s2,s2,a5
-    while (num) {
-    80001c54:	02090463          	beqz	s2,80001c7c <_Z11printNumberm+0xa0>
-        num2 *= 10;
-    80001c58:	00249793          	slli	a5,s1,0x2
-    80001c5c:	009784b3          	add	s1,a5,s1
-    80001c60:	00149793          	slli	a5,s1,0x1
-        num2 += num % 10;
-    80001c64:	00a00493          	li	s1,10
-    80001c68:	029974b3          	remu	s1,s2,s1
-    80001c6c:	00f484b3          	add	s1,s1,a5
-        if (!num2) ++zero_count;
-    80001c70:	fc049ee3          	bnez	s1,80001c4c <_Z11printNumberm+0x70>
-    80001c74:	00198993          	addi	s3,s3,1
-    80001c78:	fd5ff06f          	j	80001c4c <_Z11printNumberm+0x70>
-    while (num2) {
-    80001c7c:	02048063          	beqz	s1,80001c9c <_Z11printNumberm+0xc0>
-        putc(num2 % 10 + '0');
-    80001c80:	00a00913          	li	s2,10
-    80001c84:	0324f533          	remu	a0,s1,s2
-    80001c88:	03050513          	addi	a0,a0,48
-    80001c8c:	00000097          	auipc	ra,0x0
-    80001c90:	9e0080e7          	jalr	-1568(ra) # 8000166c <_Z4putcc>
-        num2 /= 10;
-    80001c94:	0324d4b3          	divu	s1,s1,s2
-    while (num2) {
-    80001c98:	fe5ff06f          	j	80001c7c <_Z11printNumberm+0xa0>
-    while (zero_count--) putc('0');
-    80001c9c:	fff98493          	addi	s1,s3,-1
-    80001ca0:	00098c63          	beqz	s3,80001cb8 <_Z11printNumberm+0xdc>
-    80001ca4:	03000513          	li	a0,48
-    80001ca8:	00000097          	auipc	ra,0x0
-    80001cac:	9c4080e7          	jalr	-1596(ra) # 8000166c <_Z4putcc>
-    80001cb0:	00048993          	mv	s3,s1
-    80001cb4:	fe9ff06f          	j	80001c9c <_Z11printNumberm+0xc0>
-}
-    80001cb8:	02813083          	ld	ra,40(sp)
-    80001cbc:	02013403          	ld	s0,32(sp)
-    80001cc0:	01813483          	ld	s1,24(sp)
-    80001cc4:	01013903          	ld	s2,16(sp)
-    80001cc8:	00813983          	ld	s3,8(sp)
-    80001ccc:	03010113          	addi	sp,sp,48
-    80001cd0:	00008067          	ret
-
-0000000080001cd4 <_Z15userMainWrapperPv>:
-void userMainWrapper(void *args) {
-    80001cd4:	ff010113          	addi	sp,sp,-16
-    80001cd8:	00113423          	sd	ra,8(sp)
-    80001cdc:	00813023          	sd	s0,0(sp)
-    80001ce0:	01010413          	addi	s0,sp,16
-    userMain();
-    80001ce4:	00005097          	auipc	ra,0x5
-    80001ce8:	a40080e7          	jalr	-1472(ra) # 80006724 <_Z8userMainv>
-}
-    80001cec:	00813083          	ld	ra,8(sp)
-    80001cf0:	00013403          	ld	s0,0(sp)
-    80001cf4:	01010113          	addi	sp,sp,16
-    80001cf8:	00008067          	ret
+    80001cec:	00048513          	mv	a0,s1
+    80001cf0:	00000097          	auipc	ra,0x0
+    80001cf4:	97c080e7          	jalr	-1668(ra) # 8000166c <_Z4putcc>
+    while (true) {
+    80001cf8:	fb9ff06f          	j	80001cb0 <_Z6testerPv+0x1c>
 
 0000000080001cfc <main>:
     }
@@ -1290,19 +1293,18 @@ inline void RiscV::ms_sstatus(uint64 mask) {
     80001d60:	fe040513          	addi	a0,s0,-32
     80001d64:	fffff097          	auipc	ra,0xfffff
     80001d68:	594080e7          	jalr	1428(ra) # 800012f8 <_Z13thread_createPP3TCBPFvPvES2_>
-
     /// Test Periodic Thread
 //    Thread *periodic = new PeriodicWorker();
 //    periodic -> start();
-    thread_create(&threads[2], tester, nullptr);
+//    thread_create(&threads[2], tester, nullptr);
+    /// Test Everything
+    thread_create(&threads[2], userMainWrapper, nullptr);
     80001d6c:	00000613          	li	a2,0
     80001d70:	00000597          	auipc	a1,0x0
-    80001d74:	e0458593          	addi	a1,a1,-508 # 80001b74 <_Z6testerPv>
+    80001d74:	e0458593          	addi	a1,a1,-508 # 80001b74 <_Z15userMainWrapperPv>
     80001d78:	fe840513          	addi	a0,s0,-24
     80001d7c:	fffff097          	auipc	ra,0xfffff
     80001d80:	57c080e7          	jalr	1404(ra) # 800012f8 <_Z13thread_createPP3TCBPFvPvES2_>
-    /// Test Everything
-//    thread_create(&threads[2], userMainWrapper, nullptr);
     while (true) thread_dispatch();
     80001d84:	fffff097          	auipc	ra,0xfffff
     80001d88:	648080e7          	jalr	1608(ra) # 800013cc <_Z15thread_dispatchv>
@@ -2306,7 +2308,7 @@ void MemoryAllocator::print() {
         printNumber(tmp -> size);
     80002804:	0004b503          	ld	a0,0(s1)
     80002808:	fffff097          	auipc	ra,0xfffff
-    8000280c:	3d4080e7          	jalr	980(ra) # 80001bdc <_Z11printNumberm>
+    8000280c:	394080e7          	jalr	916(ra) # 80001b9c <_Z11printNumberm>
         putc(' ');
     80002810:	02000513          	li	a0,32
     80002814:	fffff097          	auipc	ra,0xfffff
@@ -2330,7 +2332,7 @@ void MemoryAllocator::print() {
         printNumber(tmp -> size);
     80002848:	0004b503          	ld	a0,0(s1)
     8000284c:	fffff097          	auipc	ra,0xfffff
-    80002850:	390080e7          	jalr	912(ra) # 80001bdc <_Z11printNumberm>
+    80002850:	350080e7          	jalr	848(ra) # 80001b9c <_Z11printNumberm>
         putc(' ');
     80002854:	02000513          	li	a0,32
     80002858:	fffff097          	auipc	ra,0xfffff
@@ -2588,7 +2590,7 @@ void Scheduler::put(TCB *thread) {
         tail_ready -> set_next_ready(thread);
     80002b1c:	00048593          	mv	a1,s1
     80002b20:	00001097          	auipc	ra,0x1
-    80002b24:	a90080e7          	jalr	-1392(ra) # 800035b0 <_ZN3TCB14set_next_readyEPS_>
+    80002b24:	ad8080e7          	jalr	-1320(ra) # 800035f8 <_ZN3TCB14set_next_readyEPS_>
         tail_ready = thread;
     80002b28:	0000a797          	auipc	a5,0xa
     80002b2c:	3697bc23          	sd	s1,888(a5) # 8000cea0 <_ZN9Scheduler10tail_readyE>
@@ -2598,7 +2600,7 @@ void Scheduler::put(TCB *thread) {
     80002b30:	00000593          	li	a1,0
     80002b34:	00048513          	mv	a0,s1
     80002b38:	00001097          	auipc	ra,0x1
-    80002b3c:	a78080e7          	jalr	-1416(ra) # 800035b0 <_ZN3TCB14set_next_readyEPS_>
+    80002b3c:	ac0080e7          	jalr	-1344(ra) # 800035f8 <_ZN3TCB14set_next_readyEPS_>
 }
     80002b40:	01813083          	ld	ra,24(sp)
     80002b44:	01013403          	ld	s0,16(sp)
@@ -2628,7 +2630,7 @@ TCB* Scheduler::get() {
     head_ready = head_ready -> get_next_ready();
     80002b88:	00048513          	mv	a0,s1
     80002b8c:	00001097          	auipc	ra,0x1
-    80002b90:	a08080e7          	jalr	-1528(ra) # 80003594 <_ZNK3TCB14get_next_readyEv>
+    80002b90:	a50080e7          	jalr	-1456(ra) # 800035dc <_ZNK3TCB14get_next_readyEv>
     80002b94:	0000a797          	auipc	a5,0xa
     80002b98:	30a7ba23          	sd	a0,788(a5) # 8000cea8 <_ZN9Scheduler10head_readyE>
     if (!head_ready) tail_ready = nullptr;
@@ -2637,7 +2639,7 @@ TCB* Scheduler::get() {
     80002ba0:	00000593          	li	a1,0
     80002ba4:	00048513          	mv	a0,s1
     80002ba8:	00001097          	auipc	ra,0x1
-    80002bac:	a08080e7          	jalr	-1528(ra) # 800035b0 <_ZN3TCB14set_next_readyEPS_>
+    80002bac:	a50080e7          	jalr	-1456(ra) # 800035f8 <_ZN3TCB14set_next_readyEPS_>
     return tmp;
 }
     80002bb0:	00048513          	mv	a0,s1
@@ -2652,11 +2654,11 @@ TCB* Scheduler::get() {
     80002bd0:	fd1ff06f          	j	80002ba0 <_ZN9Scheduler3getEv+0x38>
 
 0000000080002bd4 <_ZN9Scheduler17remove_from_sleepEP3TCB>:
-    thread -> set_next_sleeping(nullptr);
     change_thread();
     return 0;
 }
 
+/// remove thread from sleeping list (used for timed wait)
 int Scheduler::remove_from_sleep(TCB *thread) {
     80002bd4:	ff010113          	addi	sp,sp,-16
     80002bd8:	00813423          	sd	s0,8(sp)
@@ -2713,6 +2715,7 @@ int Scheduler::remove_from_sleep(TCB *thread) {
 
 0000000080002c60 <_ZN9Scheduler13change_threadEv>:
 
+/// dispatch, without putting running back in scheduler
 void Scheduler::change_thread() {
     80002c60:	fe010113          	addi	sp,sp,-32
     80002c64:	00113c23          	sd	ra,24(sp)
@@ -2727,7 +2730,7 @@ void Scheduler::change_thread() {
     80002c80:	00100593          	li	a1,1
     80002c84:	00048513          	mv	a0,s1
     80002c88:	00001097          	auipc	ra,0x1
-    80002c8c:	9b4080e7          	jalr	-1612(ra) # 8000363c <_ZN3TCB10set_statusENS_6StatusE>
+    80002c8c:	9fc080e7          	jalr	-1540(ra) # 80003684 <_ZN3TCB10set_statusENS_6StatusE>
     if (!old-> timed_wait) {
     80002c90:	0484c783          	lbu	a5,72(s1)
     80002c94:	00078c63          	beqz	a5,80002cac <_ZN9Scheduler13change_threadEv+0x4c>
@@ -2750,8 +2753,8 @@ void Scheduler::change_thread() {
         if (old != TCB::running) TCB::yield(old, TCB::running);
     80002cc4:	fca48ae3          	beq	s1,a0,80002c98 <_ZN9Scheduler13change_threadEv+0x38>
     80002cc8:	00048513          	mv	a0,s1
-    80002ccc:	00000097          	auipc	ra,0x0
-    80002cd0:	7e0080e7          	jalr	2016(ra) # 800034ac <_ZN3TCB5yieldEPS_S0_>
+    80002ccc:	00001097          	auipc	ra,0x1
+    80002cd0:	828080e7          	jalr	-2008(ra) # 800034f4 <_ZN3TCB5yieldEPS_S0_>
 }
     80002cd4:	fc5ff06f          	j	80002c98 <_ZN9Scheduler13change_threadEv+0x38>
 
@@ -2786,14 +2789,14 @@ int Scheduler::put_to_sleep(time_t time) {
         current_time += tmp -> get_time_to_sleep();
     80002d28:	00048513          	mv	a0,s1
     80002d2c:	00001097          	auipc	ra,0x1
-    80002d30:	8f4080e7          	jalr	-1804(ra) # 80003620 <_ZNK3TCB17get_time_to_sleepEv>
+    80002d30:	93c080e7          	jalr	-1732(ra) # 80003668 <_ZNK3TCB17get_time_to_sleepEv>
     80002d34:	00a90933          	add	s2,s2,a0
         if (current_time > time) {
     80002d38:	0529ea63          	bltu	s3,s2,80002d8c <_ZN9Scheduler12put_to_sleepEm+0xb4>
         tmp = tmp -> get_next_sleeping();
     80002d3c:	00048513          	mv	a0,s1
     80002d40:	00001097          	auipc	ra,0x1
-    80002d44:	8a8080e7          	jalr	-1880(ra) # 800035e8 <_ZNK3TCB17get_next_sleepingEv>
+    80002d44:	8f0080e7          	jalr	-1808(ra) # 80003630 <_ZNK3TCB17get_next_sleepingEv>
         prev = tmp;
     80002d48:	00048a13          	mv	s4,s1
         tmp = tmp -> get_next_sleeping();
@@ -2807,12 +2810,12 @@ int Scheduler::put_to_sleep(time_t time) {
     80002d5c:	00000593          	li	a1,0
     80002d60:	000a8513          	mv	a0,s5
     80002d64:	00001097          	auipc	ra,0x1
-    80002d68:	868080e7          	jalr	-1944(ra) # 800035cc <_ZN3TCB17set_next_sleepingEPS_>
+    80002d68:	8b0080e7          	jalr	-1872(ra) # 80003614 <_ZN3TCB17set_next_sleepingEPS_>
         thread -> set_time_to_sleep(time);
     80002d6c:	00098593          	mv	a1,s3
     80002d70:	000a8513          	mv	a0,s5
     80002d74:	00001097          	auipc	ra,0x1
-    80002d78:	890080e7          	jalr	-1904(ra) # 80003604 <_ZN3TCB17set_time_to_sleepEm>
+    80002d78:	8d8080e7          	jalr	-1832(ra) # 8000364c <_ZN3TCB17set_time_to_sleepEm>
         change_thread();
     80002d7c:	00000097          	auipc	ra,0x0
     80002d80:	ee4080e7          	jalr	-284(ra) # 80002c60 <_ZN9Scheduler13change_threadEv>
@@ -2822,33 +2825,33 @@ int Scheduler::put_to_sleep(time_t time) {
             time_t new_time = time - (current_time - tmp -> get_time_to_sleep());
     80002d8c:	00048513          	mv	a0,s1
     80002d90:	00001097          	auipc	ra,0x1
-    80002d94:	890080e7          	jalr	-1904(ra) # 80003620 <_ZNK3TCB17get_time_to_sleepEv>
+    80002d94:	8d8080e7          	jalr	-1832(ra) # 80003668 <_ZNK3TCB17get_time_to_sleepEv>
     80002d98:	41250933          	sub	s2,a0,s2
     80002d9c:	013909b3          	add	s3,s2,s3
             thread -> set_time_to_sleep(new_time);
     80002da0:	00098593          	mv	a1,s3
     80002da4:	000a8513          	mv	a0,s5
     80002da8:	00001097          	auipc	ra,0x1
-    80002dac:	85c080e7          	jalr	-1956(ra) # 80003604 <_ZN3TCB17set_time_to_sleepEm>
+    80002dac:	8a4080e7          	jalr	-1884(ra) # 8000364c <_ZN3TCB17set_time_to_sleepEm>
             thread -> set_next_sleeping(tmp);
     80002db0:	00048593          	mv	a1,s1
     80002db4:	000a8513          	mv	a0,s5
     80002db8:	00001097          	auipc	ra,0x1
-    80002dbc:	814080e7          	jalr	-2028(ra) # 800035cc <_ZN3TCB17set_next_sleepingEPS_>
+    80002dbc:	85c080e7          	jalr	-1956(ra) # 80003614 <_ZN3TCB17set_next_sleepingEPS_>
             if (prev) prev -> set_next_sleeping(thread);
     80002dc0:	040a0063          	beqz	s4,80002e00 <_ZN9Scheduler12put_to_sleepEm+0x128>
     80002dc4:	000a8593          	mv	a1,s5
     80002dc8:	000a0513          	mv	a0,s4
     80002dcc:	00001097          	auipc	ra,0x1
-    80002dd0:	800080e7          	jalr	-2048(ra) # 800035cc <_ZN3TCB17set_next_sleepingEPS_>
+    80002dd0:	848080e7          	jalr	-1976(ra) # 80003614 <_ZN3TCB17set_next_sleepingEPS_>
             tmp -> set_time_to_sleep(tmp -> get_time_to_sleep() - new_time);
     80002dd4:	00048513          	mv	a0,s1
     80002dd8:	00001097          	auipc	ra,0x1
-    80002ddc:	848080e7          	jalr	-1976(ra) # 80003620 <_ZNK3TCB17get_time_to_sleepEv>
+    80002ddc:	890080e7          	jalr	-1904(ra) # 80003668 <_ZNK3TCB17get_time_to_sleepEv>
     80002de0:	413505b3          	sub	a1,a0,s3
     80002de4:	00048513          	mv	a0,s1
     80002de8:	00001097          	auipc	ra,0x1
-    80002dec:	81c080e7          	jalr	-2020(ra) # 80003604 <_ZN3TCB17set_time_to_sleepEm>
+    80002dec:	864080e7          	jalr	-1948(ra) # 8000364c <_ZN3TCB17set_time_to_sleepEm>
             change_thread();
     80002df0:	00000097          	auipc	ra,0x0
     80002df4:	e70080e7          	jalr	-400(ra) # 80002c60 <_ZN9Scheduler13change_threadEv>
@@ -2862,18 +2865,18 @@ int Scheduler::put_to_sleep(time_t time) {
     thread -> set_time_to_sleep(time - current_time);
     80002e0c:	412985b3          	sub	a1,s3,s2
     80002e10:	000a8513          	mv	a0,s5
-    80002e14:	00000097          	auipc	ra,0x0
-    80002e18:	7f0080e7          	jalr	2032(ra) # 80003604 <_ZN3TCB17set_time_to_sleepEm>
+    80002e14:	00001097          	auipc	ra,0x1
+    80002e18:	838080e7          	jalr	-1992(ra) # 8000364c <_ZN3TCB17set_time_to_sleepEm>
     prev -> set_next_sleeping(thread);
     80002e1c:	000a8593          	mv	a1,s5
     80002e20:	000a0513          	mv	a0,s4
     80002e24:	00000097          	auipc	ra,0x0
-    80002e28:	7a8080e7          	jalr	1960(ra) # 800035cc <_ZN3TCB17set_next_sleepingEPS_>
+    80002e28:	7f0080e7          	jalr	2032(ra) # 80003614 <_ZN3TCB17set_next_sleepingEPS_>
     thread -> set_next_sleeping(nullptr);
     80002e2c:	00000593          	li	a1,0
     80002e30:	000a8513          	mv	a0,s5
     80002e34:	00000097          	auipc	ra,0x0
-    80002e38:	798080e7          	jalr	1944(ra) # 800035cc <_ZN3TCB17set_next_sleepingEPS_>
+    80002e38:	7e0080e7          	jalr	2016(ra) # 80003614 <_ZN3TCB17set_next_sleepingEPS_>
     change_thread();
     80002e3c:	00000097          	auipc	ra,0x0
     80002e40:	e24080e7          	jalr	-476(ra) # 80002c60 <_ZN9Scheduler13change_threadEv>
@@ -2994,7 +2997,7 @@ void RiscV::handle_supervisor_trap() {
         printNumber(scause);
     80002f24:	00070513          	mv	a0,a4
     80002f28:	fffff097          	auipc	ra,0xfffff
-    80002f2c:	cb4080e7          	jalr	-844(ra) # 80001bdc <_Z11printNumberm>
+    80002f2c:	c74080e7          	jalr	-908(ra) # 80001b9c <_Z11printNumberm>
         putc('!');
     80002f30:	02100513          	li	a0,33
     80002f34:	ffffe097          	auipc	ra,0xffffe
@@ -3068,12 +3071,12 @@ inline void RiscV::write_sstatus(uint64 val) {
     80002fe0:	fc9ff06f          	j	80002fa8 <_ZN5RiscV22handle_supervisor_trapEv+0xec>
                 TCB::thread_exit();
     80002fe4:	00000097          	auipc	ra,0x0
-    80002fe8:	674080e7          	jalr	1652(ra) # 80003658 <_ZN3TCB11thread_exitEv>
+    80002fe8:	6bc080e7          	jalr	1724(ra) # 800036a0 <_ZN3TCB11thread_exitEv>
                 break;
     80002fec:	fbdff06f          	j	80002fa8 <_ZN5RiscV22handle_supervisor_trapEv+0xec>
                 TCB::dispatch();
     80002ff0:	00000097          	auipc	ra,0x0
-    80002ff4:	518080e7          	jalr	1304(ra) # 80003508 <_ZN3TCB8dispatchEv>
+    80002ff4:	560080e7          	jalr	1376(ra) # 80003550 <_ZN3TCB8dispatchEv>
                 break;
     80002ff8:	fb1ff06f          	j	80002fa8 <_ZN5RiscV22handle_supervisor_trapEv+0xec>
                 Sem::open((sem_t *) a1, a2);
@@ -3194,7 +3197,7 @@ inline void RiscV::write_sstatus(uint64 val) {
     80003130:	0007b023          	sd	zero,0(a5)
             TCB::dispatch();
     80003134:	00000097          	auipc	ra,0x0
-    80003138:	3d4080e7          	jalr	980(ra) # 80003508 <_ZN3TCB8dispatchEv>
+    80003138:	41c080e7          	jalr	1052(ra) # 80003550 <_ZN3TCB8dispatchEv>
     __asm__ volatile ("csrw sstatus, %0" : : "r"(val));
     8000313c:	10091073          	csrw	sstatus,s2
     __asm__ volatile ("csrw sepc, %0" : : "r"(val));
@@ -3483,297 +3486,293 @@ void ThreadList::free() {
     80003408:	02010113          	addi	sp,sp,32
     8000340c:	00008067          	ret
 
-0000000080003410 <_ZN3TCBC1EPFvPvES0_S0_>:
-
-TCB::TCB(void (*function_body)(void *), void *arg, void *stack) {
-    context = {
-            (uint64) wrapper_function,
-            /// stack starts from max address, rises to lower locations
-            (uint64) (stack ? (uint64) stack + DEFAULT_STACK_SIZE - 1 : 0)
-    80003410:	08068863          	beqz	a3,800034a0 <_ZN3TCBC1EPFvPvES0_S0_+0x90>
-    80003414:	000017b7          	lui	a5,0x1
-    80003418:	fff78793          	addi	a5,a5,-1 # fff <_entry-0x7ffff001>
-    8000341c:	00f687b3          	add	a5,a3,a5
-    context = {
-    80003420:	00000717          	auipc	a4,0x0
-    80003424:	28470713          	addi	a4,a4,644 # 800036a4 <_ZN3TCB16wrapper_functionEv>
-    80003428:	00e53823          	sd	a4,16(a0)
-    8000342c:	00f53c23          	sd	a5,24(a0)
-    };
-    id = cnt++;
-    80003430:	0000a717          	auipc	a4,0xa
-    80003434:	a8870713          	addi	a4,a4,-1400 # 8000ceb8 <_ZN3TCB3cntE>
-    80003438:	00072783          	lw	a5,0(a4)
-    8000343c:	0017881b          	addiw	a6,a5,1
-    80003440:	01072023          	sw	a6,0(a4)
-    80003444:	00f52423          	sw	a5,8(a0)
-    time_slice = DEFAULT_TIME_SLICE;
-    80003448:	00200793          	li	a5,2
-    8000344c:	00f53023          	sd	a5,0(a0)
-    status = RUNNABLE;
-    80003450:	02052023          	sw	zero,32(a0)
-    this -> function_body = function_body;
-    80003454:	02b53423          	sd	a1,40(a0)
-    this -> arg = arg;
-    80003458:	02c53823          	sd	a2,48(a0)
-    this -> stack = stack;
-    8000345c:	02d53c23          	sd	a3,56(a0)
-    timed_wait = false;
-    80003460:	04050423          	sb	zero,72(a0)
-    time_to_sleep = 0;
-    80003464:	04053823          	sd	zero,80(a0)
-    next_ready = nullptr;
-    80003468:	04053023          	sd	zero,64(a0)
-    next_sleeping = nullptr;
-    8000346c:	04053c23          	sd	zero,88(a0)
-    sem = nullptr;
-    80003470:	06053023          	sd	zero,96(a0)
-    if (function_body) Scheduler::put(this);
-    80003474:	02058a63          	beqz	a1,800034a8 <_ZN3TCBC1EPFvPvES0_S0_+0x98>
-TCB::TCB(void (*function_body)(void *), void *arg, void *stack) {
-    80003478:	ff010113          	addi	sp,sp,-16
-    8000347c:	00113423          	sd	ra,8(sp)
-    80003480:	00813023          	sd	s0,0(sp)
-    80003484:	01010413          	addi	s0,sp,16
-    if (function_body) Scheduler::put(this);
-    80003488:	fffff097          	auipc	ra,0xfffff
-    8000348c:	670080e7          	jalr	1648(ra) # 80002af8 <_ZN9Scheduler3putEP3TCB>
+0000000080003410 <_ZN3TCB16wrapper_functionEv>:
+//    thread_dispatch();
+    dispatch();
+    return 0;
 }
-    80003490:	00813083          	ld	ra,8(sp)
-    80003494:	00013403          	ld	s0,0(sp)
-    80003498:	01010113          	addi	sp,sp,16
-    8000349c:	00008067          	ret
-            (uint64) (stack ? (uint64) stack + DEFAULT_STACK_SIZE - 1 : 0)
-    800034a0:	00000793          	li	a5,0
-    800034a4:	f7dff06f          	j	80003420 <_ZN3TCBC1EPFvPvES0_S0_+0x10>
-    800034a8:	00008067          	ret
 
-00000000800034ac <_ZN3TCB5yieldEPS_S0_>:
+void TCB::wrapper_function() {
+    80003410:	ff010113          	addi	sp,sp,-16
+    80003414:	00113423          	sd	ra,8(sp)
+    80003418:	00813023          	sd	s0,0(sp)
+    8000341c:	01010413          	addi	s0,sp,16
     RiscV::popSppSpie();
+    80003420:	00000097          	auipc	ra,0x0
+    80003424:	a54080e7          	jalr	-1452(ra) # 80002e74 <_ZN5RiscV10popSppSpieEv>
     if (running -> function_body) running -> function_body(running -> arg);
-    thread_exit();
+    80003428:	0000a717          	auipc	a4,0xa
+    8000342c:	a9073703          	ld	a4,-1392(a4) # 8000ceb8 <_ZN3TCB7runningE>
+    80003430:	02873783          	ld	a5,40(a4)
+    80003434:	00078663          	beqz	a5,80003440 <_ZN3TCB16wrapper_functionEv+0x30>
+    80003438:	03073503          	ld	a0,48(a4)
+    8000343c:	000780e7          	jalr	a5
+//    thread_exit();
+    ::thread_exit();
+    80003440:	ffffe097          	auipc	ra,0xffffe
+    80003444:	f40080e7          	jalr	-192(ra) # 80001380 <_Z11thread_exitv>
 }
+    80003448:	00813083          	ld	ra,8(sp)
+    8000344c:	00013403          	ld	s0,0(sp)
+    80003450:	01010113          	addi	sp,sp,16
+    80003454:	00008067          	ret
+
+0000000080003458 <_ZN3TCBC1EPFvPvES0_S0_>:
+            (uint64) (stack ? (uint64) stack + DEFAULT_STACK_SIZE - 1 : 0)
+    80003458:	08068863          	beqz	a3,800034e8 <_ZN3TCBC1EPFvPvES0_S0_+0x90>
+    8000345c:	000017b7          	lui	a5,0x1
+    80003460:	fff78793          	addi	a5,a5,-1 # fff <_entry-0x7ffff001>
+    80003464:	00f687b3          	add	a5,a3,a5
+    context = {
+    80003468:	00000717          	auipc	a4,0x0
+    8000346c:	fa870713          	addi	a4,a4,-88 # 80003410 <_ZN3TCB16wrapper_functionEv>
+    80003470:	00e53823          	sd	a4,16(a0)
+    80003474:	00f53c23          	sd	a5,24(a0)
+    id = cnt++;
+    80003478:	0000a717          	auipc	a4,0xa
+    8000347c:	a4070713          	addi	a4,a4,-1472 # 8000ceb8 <_ZN3TCB7runningE>
+    80003480:	00872783          	lw	a5,8(a4)
+    80003484:	0017881b          	addiw	a6,a5,1
+    80003488:	01072423          	sw	a6,8(a4)
+    8000348c:	00f52423          	sw	a5,8(a0)
+    time_slice = DEFAULT_TIME_SLICE;
+    80003490:	00200793          	li	a5,2
+    80003494:	00f53023          	sd	a5,0(a0)
+    status = RUNNABLE;
+    80003498:	02052023          	sw	zero,32(a0)
+    this -> function_body = function_body;
+    8000349c:	02b53423          	sd	a1,40(a0)
+    this -> arg = arg;
+    800034a0:	02c53823          	sd	a2,48(a0)
+    this -> stack = stack;
+    800034a4:	02d53c23          	sd	a3,56(a0)
+    timed_wait = false;
+    800034a8:	04050423          	sb	zero,72(a0)
+    time_to_sleep = 0;
+    800034ac:	04053823          	sd	zero,80(a0)
+    next_ready = nullptr;
+    800034b0:	04053023          	sd	zero,64(a0)
+    next_sleeping = nullptr;
+    800034b4:	04053c23          	sd	zero,88(a0)
+    sem = nullptr;
+    800034b8:	06053023          	sd	zero,96(a0)
+    if (function_body) Scheduler::put(this);
+    800034bc:	02058a63          	beqz	a1,800034f0 <_ZN3TCBC1EPFvPvES0_S0_+0x98>
+TCB::TCB(void (*function_body)(void *), void *arg, void *stack) {
+    800034c0:	ff010113          	addi	sp,sp,-16
+    800034c4:	00113423          	sd	ra,8(sp)
+    800034c8:	00813023          	sd	s0,0(sp)
+    800034cc:	01010413          	addi	s0,sp,16
+    if (function_body) Scheduler::put(this);
+    800034d0:	fffff097          	auipc	ra,0xfffff
+    800034d4:	628080e7          	jalr	1576(ra) # 80002af8 <_ZN9Scheduler3putEP3TCB>
+}
+    800034d8:	00813083          	ld	ra,8(sp)
+    800034dc:	00013403          	ld	s0,0(sp)
+    800034e0:	01010113          	addi	sp,sp,16
+    800034e4:	00008067          	ret
+            (uint64) (stack ? (uint64) stack + DEFAULT_STACK_SIZE - 1 : 0)
+    800034e8:	00000793          	li	a5,0
+    800034ec:	f7dff06f          	j	80003468 <_ZN3TCBC1EPFvPvES0_S0_+0x10>
+    800034f0:	00008067          	ret
+
+00000000800034f4 <_ZN3TCB5yieldEPS_S0_>:
 
 void TCB::yield(TCB *old_running, TCB *new_running) {
-    800034ac:	fe010113          	addi	sp,sp,-32
-    800034b0:	00113c23          	sd	ra,24(sp)
-    800034b4:	00813823          	sd	s0,16(sp)
-    800034b8:	00913423          	sd	s1,8(sp)
-    800034bc:	01213023          	sd	s2,0(sp)
-    800034c0:	02010413          	addi	s0,sp,32
-    800034c4:	00050493          	mv	s1,a0
-    800034c8:	00058913          	mv	s2,a1
+    800034f4:	fe010113          	addi	sp,sp,-32
+    800034f8:	00113c23          	sd	ra,24(sp)
+    800034fc:	00813823          	sd	s0,16(sp)
+    80003500:	00913423          	sd	s1,8(sp)
+    80003504:	01213023          	sd	s2,0(sp)
+    80003508:	02010413          	addi	s0,sp,32
+    8000350c:	00050493          	mv	s1,a0
+    80003510:	00058913          	mv	s2,a1
     RiscV::push_registers();
-    800034cc:	ffffe097          	auipc	ra,0xffffe
-    800034d0:	c3c080e7          	jalr	-964(ra) # 80001108 <_ZN5RiscV14push_registersEv>
+    80003514:	ffffe097          	auipc	ra,0xffffe
+    80003518:	bf4080e7          	jalr	-1036(ra) # 80001108 <_ZN5RiscV14push_registersEv>
     if (old_running != new_running) context_switch(&old_running -> context, &new_running -> context);
-    800034d4:	01248a63          	beq	s1,s2,800034e8 <_ZN3TCB5yieldEPS_S0_+0x3c>
-    800034d8:	01090593          	addi	a1,s2,16
-    800034dc:	01048513          	addi	a0,s1,16
-    800034e0:	ffffe097          	auipc	ra,0xffffe
-    800034e4:	d28080e7          	jalr	-728(ra) # 80001208 <_ZN3TCB14context_switchEPNS_7ContextES1_>
+    8000351c:	01248a63          	beq	s1,s2,80003530 <_ZN3TCB5yieldEPS_S0_+0x3c>
+    80003520:	01090593          	addi	a1,s2,16
+    80003524:	01048513          	addi	a0,s1,16
+    80003528:	ffffe097          	auipc	ra,0xffffe
+    8000352c:	ce0080e7          	jalr	-800(ra) # 80001208 <_ZN3TCB14context_switchEPNS_7ContextES1_>
     RiscV::pop_registers();
-    800034e8:	ffffe097          	auipc	ra,0xffffe
-    800034ec:	ca0080e7          	jalr	-864(ra) # 80001188 <_ZN5RiscV13pop_registersEv>
+    80003530:	ffffe097          	auipc	ra,0xffffe
+    80003534:	c58080e7          	jalr	-936(ra) # 80001188 <_ZN5RiscV13pop_registersEv>
 }
-    800034f0:	01813083          	ld	ra,24(sp)
-    800034f4:	01013403          	ld	s0,16(sp)
-    800034f8:	00813483          	ld	s1,8(sp)
-    800034fc:	00013903          	ld	s2,0(sp)
-    80003500:	02010113          	addi	sp,sp,32
-    80003504:	00008067          	ret
+    80003538:	01813083          	ld	ra,24(sp)
+    8000353c:	01013403          	ld	s0,16(sp)
+    80003540:	00813483          	ld	s1,8(sp)
+    80003544:	00013903          	ld	s2,0(sp)
+    80003548:	02010113          	addi	sp,sp,32
+    8000354c:	00008067          	ret
 
-0000000080003508 <_ZN3TCB8dispatchEv>:
+0000000080003550 <_ZN3TCB8dispatchEv>:
 
 void TCB::dispatch() {
-    80003508:	fe010113          	addi	sp,sp,-32
-    8000350c:	00113c23          	sd	ra,24(sp)
-    80003510:	00813823          	sd	s0,16(sp)
-    80003514:	00913423          	sd	s1,8(sp)
-    80003518:	02010413          	addi	s0,sp,32
+    80003550:	fe010113          	addi	sp,sp,-32
+    80003554:	00113c23          	sd	ra,24(sp)
+    80003558:	00813823          	sd	s0,16(sp)
+    8000355c:	00913423          	sd	s1,8(sp)
+    80003560:	02010413          	addi	s0,sp,32
     TCB* old = running;
-    8000351c:	0000a497          	auipc	s1,0xa
-    80003520:	9a44b483          	ld	s1,-1628(s1) # 8000cec0 <_ZN3TCB7runningE>
+    80003564:	0000a497          	auipc	s1,0xa
+    80003568:	9544b483          	ld	s1,-1708(s1) # 8000ceb8 <_ZN3TCB7runningE>
     if (old -> status == RUNNABLE) Scheduler::put(old);
-    80003524:	0204a783          	lw	a5,32(s1)
-    80003528:	04078663          	beqz	a5,80003574 <_ZN3TCB8dispatchEv+0x6c>
+    8000356c:	0204a783          	lw	a5,32(s1)
+    80003570:	04078663          	beqz	a5,800035bc <_ZN3TCB8dispatchEv+0x6c>
     else if (old -> status == FINISHED) MemoryAllocator::mem_free(old -> stack);
-    8000352c:	00300713          	li	a4,3
-    80003530:	04e78a63          	beq	a5,a4,80003584 <_ZN3TCB8dispatchEv+0x7c>
+    80003574:	00300713          	li	a4,3
+    80003578:	04e78a63          	beq	a5,a4,800035cc <_ZN3TCB8dispatchEv+0x7c>
     running = Scheduler::get();
-    80003534:	fffff097          	auipc	ra,0xfffff
-    80003538:	634080e7          	jalr	1588(ra) # 80002b68 <_ZN9Scheduler3getEv>
-    8000353c:	00050593          	mv	a1,a0
-    80003540:	0000a797          	auipc	a5,0xa
-    80003544:	97878793          	addi	a5,a5,-1672 # 8000ceb8 <_ZN3TCB3cntE>
-    80003548:	00a7b423          	sd	a0,8(a5)
+    8000357c:	fffff097          	auipc	ra,0xfffff
+    80003580:	5ec080e7          	jalr	1516(ra) # 80002b68 <_ZN9Scheduler3getEv>
+    80003584:	00050593          	mv	a1,a0
+    80003588:	0000a797          	auipc	a5,0xa
+    8000358c:	93078793          	addi	a5,a5,-1744 # 8000ceb8 <_ZN3TCB7runningE>
+    80003590:	00a7b023          	sd	a0,0(a5)
     time_slice_counter = 0;
-    8000354c:	0007b823          	sd	zero,16(a5)
+    80003594:	0007b823          	sd	zero,16(a5)
     if (old != running) yield(old, running);
-    80003550:	00a48863          	beq	s1,a0,80003560 <_ZN3TCB8dispatchEv+0x58>
-    80003554:	00048513          	mv	a0,s1
-    80003558:	00000097          	auipc	ra,0x0
-    8000355c:	f54080e7          	jalr	-172(ra) # 800034ac <_ZN3TCB5yieldEPS_S0_>
+    80003598:	00a48863          	beq	s1,a0,800035a8 <_ZN3TCB8dispatchEv+0x58>
+    8000359c:	00048513          	mv	a0,s1
+    800035a0:	00000097          	auipc	ra,0x0
+    800035a4:	f54080e7          	jalr	-172(ra) # 800034f4 <_ZN3TCB5yieldEPS_S0_>
 }
-    80003560:	01813083          	ld	ra,24(sp)
-    80003564:	01013403          	ld	s0,16(sp)
-    80003568:	00813483          	ld	s1,8(sp)
-    8000356c:	02010113          	addi	sp,sp,32
-    80003570:	00008067          	ret
+    800035a8:	01813083          	ld	ra,24(sp)
+    800035ac:	01013403          	ld	s0,16(sp)
+    800035b0:	00813483          	ld	s1,8(sp)
+    800035b4:	02010113          	addi	sp,sp,32
+    800035b8:	00008067          	ret
     if (old -> status == RUNNABLE) Scheduler::put(old);
-    80003574:	00048513          	mv	a0,s1
-    80003578:	fffff097          	auipc	ra,0xfffff
-    8000357c:	580080e7          	jalr	1408(ra) # 80002af8 <_ZN9Scheduler3putEP3TCB>
-    80003580:	fb5ff06f          	j	80003534 <_ZN3TCB8dispatchEv+0x2c>
+    800035bc:	00048513          	mv	a0,s1
+    800035c0:	fffff097          	auipc	ra,0xfffff
+    800035c4:	538080e7          	jalr	1336(ra) # 80002af8 <_ZN9Scheduler3putEP3TCB>
+    800035c8:	fb5ff06f          	j	8000357c <_ZN3TCB8dispatchEv+0x2c>
     else if (old -> status == FINISHED) MemoryAllocator::mem_free(old -> stack);
-    80003584:	0384b503          	ld	a0,56(s1)
-    80003588:	fffff097          	auipc	ra,0xfffff
-    8000358c:	0b0080e7          	jalr	176(ra) # 80002638 <_ZN15MemoryAllocator8mem_freeEPv>
-    80003590:	fa5ff06f          	j	80003534 <_ZN3TCB8dispatchEv+0x2c>
+    800035cc:	0384b503          	ld	a0,56(s1)
+    800035d0:	fffff097          	auipc	ra,0xfffff
+    800035d4:	068080e7          	jalr	104(ra) # 80002638 <_ZN15MemoryAllocator8mem_freeEPv>
+    800035d8:	fa5ff06f          	j	8000357c <_ZN3TCB8dispatchEv+0x2c>
 
-0000000080003594 <_ZNK3TCB14get_next_readyEv>:
+00000000800035dc <_ZNK3TCB14get_next_readyEv>:
 
 TCB *TCB::get_next_ready() const {
-    80003594:	ff010113          	addi	sp,sp,-16
-    80003598:	00813423          	sd	s0,8(sp)
-    8000359c:	01010413          	addi	s0,sp,16
+    800035dc:	ff010113          	addi	sp,sp,-16
+    800035e0:	00813423          	sd	s0,8(sp)
+    800035e4:	01010413          	addi	s0,sp,16
     return next_ready;
 }
-    800035a0:	04053503          	ld	a0,64(a0)
-    800035a4:	00813403          	ld	s0,8(sp)
-    800035a8:	01010113          	addi	sp,sp,16
-    800035ac:	00008067          	ret
+    800035e8:	04053503          	ld	a0,64(a0)
+    800035ec:	00813403          	ld	s0,8(sp)
+    800035f0:	01010113          	addi	sp,sp,16
+    800035f4:	00008067          	ret
 
-00000000800035b0 <_ZN3TCB14set_next_readyEPS_>:
+00000000800035f8 <_ZN3TCB14set_next_readyEPS_>:
 
 void TCB::set_next_ready(TCB *next) {
-    800035b0:	ff010113          	addi	sp,sp,-16
-    800035b4:	00813423          	sd	s0,8(sp)
-    800035b8:	01010413          	addi	s0,sp,16
+    800035f8:	ff010113          	addi	sp,sp,-16
+    800035fc:	00813423          	sd	s0,8(sp)
+    80003600:	01010413          	addi	s0,sp,16
     next_ready = next;
-    800035bc:	04b53023          	sd	a1,64(a0)
+    80003604:	04b53023          	sd	a1,64(a0)
 }
-    800035c0:	00813403          	ld	s0,8(sp)
-    800035c4:	01010113          	addi	sp,sp,16
-    800035c8:	00008067          	ret
+    80003608:	00813403          	ld	s0,8(sp)
+    8000360c:	01010113          	addi	sp,sp,16
+    80003610:	00008067          	ret
 
-00000000800035cc <_ZN3TCB17set_next_sleepingEPS_>:
+0000000080003614 <_ZN3TCB17set_next_sleepingEPS_>:
 
 void TCB::set_next_sleeping(TCB *next) {
-    800035cc:	ff010113          	addi	sp,sp,-16
-    800035d0:	00813423          	sd	s0,8(sp)
-    800035d4:	01010413          	addi	s0,sp,16
+    80003614:	ff010113          	addi	sp,sp,-16
+    80003618:	00813423          	sd	s0,8(sp)
+    8000361c:	01010413          	addi	s0,sp,16
     next_sleeping = next;
-    800035d8:	04b53c23          	sd	a1,88(a0)
+    80003620:	04b53c23          	sd	a1,88(a0)
 }
-    800035dc:	00813403          	ld	s0,8(sp)
-    800035e0:	01010113          	addi	sp,sp,16
-    800035e4:	00008067          	ret
+    80003624:	00813403          	ld	s0,8(sp)
+    80003628:	01010113          	addi	sp,sp,16
+    8000362c:	00008067          	ret
 
-00000000800035e8 <_ZNK3TCB17get_next_sleepingEv>:
+0000000080003630 <_ZNK3TCB17get_next_sleepingEv>:
 
 TCB* TCB::get_next_sleeping() const {
-    800035e8:	ff010113          	addi	sp,sp,-16
-    800035ec:	00813423          	sd	s0,8(sp)
-    800035f0:	01010413          	addi	s0,sp,16
+    80003630:	ff010113          	addi	sp,sp,-16
+    80003634:	00813423          	sd	s0,8(sp)
+    80003638:	01010413          	addi	s0,sp,16
     return next_sleeping;
 }
-    800035f4:	05853503          	ld	a0,88(a0)
-    800035f8:	00813403          	ld	s0,8(sp)
-    800035fc:	01010113          	addi	sp,sp,16
-    80003600:	00008067          	ret
+    8000363c:	05853503          	ld	a0,88(a0)
+    80003640:	00813403          	ld	s0,8(sp)
+    80003644:	01010113          	addi	sp,sp,16
+    80003648:	00008067          	ret
 
-0000000080003604 <_ZN3TCB17set_time_to_sleepEm>:
+000000008000364c <_ZN3TCB17set_time_to_sleepEm>:
 
 void TCB::set_time_to_sleep(time_t time) {
-    80003604:	ff010113          	addi	sp,sp,-16
-    80003608:	00813423          	sd	s0,8(sp)
-    8000360c:	01010413          	addi	s0,sp,16
+    8000364c:	ff010113          	addi	sp,sp,-16
+    80003650:	00813423          	sd	s0,8(sp)
+    80003654:	01010413          	addi	s0,sp,16
     time_to_sleep = time;
-    80003610:	04b53823          	sd	a1,80(a0)
+    80003658:	04b53823          	sd	a1,80(a0)
 }
-    80003614:	00813403          	ld	s0,8(sp)
-    80003618:	01010113          	addi	sp,sp,16
-    8000361c:	00008067          	ret
+    8000365c:	00813403          	ld	s0,8(sp)
+    80003660:	01010113          	addi	sp,sp,16
+    80003664:	00008067          	ret
 
-0000000080003620 <_ZNK3TCB17get_time_to_sleepEv>:
+0000000080003668 <_ZNK3TCB17get_time_to_sleepEv>:
 
 time_t TCB::get_time_to_sleep() const {
-    80003620:	ff010113          	addi	sp,sp,-16
-    80003624:	00813423          	sd	s0,8(sp)
-    80003628:	01010413          	addi	s0,sp,16
+    80003668:	ff010113          	addi	sp,sp,-16
+    8000366c:	00813423          	sd	s0,8(sp)
+    80003670:	01010413          	addi	s0,sp,16
     return time_to_sleep;
 }
-    8000362c:	05053503          	ld	a0,80(a0)
-    80003630:	00813403          	ld	s0,8(sp)
-    80003634:	01010113          	addi	sp,sp,16
-    80003638:	00008067          	ret
+    80003674:	05053503          	ld	a0,80(a0)
+    80003678:	00813403          	ld	s0,8(sp)
+    8000367c:	01010113          	addi	sp,sp,16
+    80003680:	00008067          	ret
 
-000000008000363c <_ZN3TCB10set_statusENS_6StatusE>:
+0000000080003684 <_ZN3TCB10set_statusENS_6StatusE>:
 
 void TCB::set_status(TCB::Status stat) {
-    8000363c:	ff010113          	addi	sp,sp,-16
-    80003640:	00813423          	sd	s0,8(sp)
-    80003644:	01010413          	addi	s0,sp,16
+    80003684:	ff010113          	addi	sp,sp,-16
+    80003688:	00813423          	sd	s0,8(sp)
+    8000368c:	01010413          	addi	s0,sp,16
     this -> status = stat;
-    80003648:	02b52023          	sw	a1,32(a0)
+    80003690:	02b52023          	sw	a1,32(a0)
 }
-    8000364c:	00813403          	ld	s0,8(sp)
-    80003650:	01010113          	addi	sp,sp,16
-    80003654:	00008067          	ret
+    80003694:	00813403          	ld	s0,8(sp)
+    80003698:	01010113          	addi	sp,sp,16
+    8000369c:	00008067          	ret
 
-0000000080003658 <_ZN3TCB11thread_exitEv>:
+00000000800036a0 <_ZN3TCB11thread_exitEv>:
     if (!running) return -1;
-    80003658:	0000a517          	auipc	a0,0xa
-    8000365c:	86853503          	ld	a0,-1944(a0) # 8000cec0 <_ZN3TCB7runningE>
-    80003660:	02050e63          	beqz	a0,8000369c <_ZN3TCB11thread_exitEv+0x44>
+    800036a0:	0000a517          	auipc	a0,0xa
+    800036a4:	81853503          	ld	a0,-2024(a0) # 8000ceb8 <_ZN3TCB7runningE>
+    800036a8:	02050e63          	beqz	a0,800036e4 <_ZN3TCB11thread_exitEv+0x44>
 int TCB::thread_exit() {
-    80003664:	ff010113          	addi	sp,sp,-16
-    80003668:	00113423          	sd	ra,8(sp)
-    8000366c:	00813023          	sd	s0,0(sp)
-    80003670:	01010413          	addi	s0,sp,16
+    800036ac:	ff010113          	addi	sp,sp,-16
+    800036b0:	00113423          	sd	ra,8(sp)
+    800036b4:	00813023          	sd	s0,0(sp)
+    800036b8:	01010413          	addi	s0,sp,16
     running -> set_status(Status::FINISHED);
-    80003674:	00300593          	li	a1,3
-    80003678:	00000097          	auipc	ra,0x0
-    8000367c:	fc4080e7          	jalr	-60(ra) # 8000363c <_ZN3TCB10set_statusENS_6StatusE>
-    thread_dispatch();
-    80003680:	ffffe097          	auipc	ra,0xffffe
-    80003684:	d4c080e7          	jalr	-692(ra) # 800013cc <_Z15thread_dispatchv>
+    800036bc:	00300593          	li	a1,3
+    800036c0:	00000097          	auipc	ra,0x0
+    800036c4:	fc4080e7          	jalr	-60(ra) # 80003684 <_ZN3TCB10set_statusENS_6StatusE>
+    dispatch();
+    800036c8:	00000097          	auipc	ra,0x0
+    800036cc:	e88080e7          	jalr	-376(ra) # 80003550 <_ZN3TCB8dispatchEv>
     return 0;
-    80003688:	00000513          	li	a0,0
+    800036d0:	00000513          	li	a0,0
 }
-    8000368c:	00813083          	ld	ra,8(sp)
-    80003690:	00013403          	ld	s0,0(sp)
-    80003694:	01010113          	addi	sp,sp,16
-    80003698:	00008067          	ret
+    800036d4:	00813083          	ld	ra,8(sp)
+    800036d8:	00013403          	ld	s0,0(sp)
+    800036dc:	01010113          	addi	sp,sp,16
+    800036e0:	00008067          	ret
     if (!running) return -1;
-    8000369c:	fff00513          	li	a0,-1
+    800036e4:	fff00513          	li	a0,-1
 }
-    800036a0:	00008067          	ret
-
-00000000800036a4 <_ZN3TCB16wrapper_functionEv>:
-void TCB::wrapper_function() {
-    800036a4:	ff010113          	addi	sp,sp,-16
-    800036a8:	00113423          	sd	ra,8(sp)
-    800036ac:	00813023          	sd	s0,0(sp)
-    800036b0:	01010413          	addi	s0,sp,16
-    RiscV::popSppSpie();
-    800036b4:	fffff097          	auipc	ra,0xfffff
-    800036b8:	7c0080e7          	jalr	1984(ra) # 80002e74 <_ZN5RiscV10popSppSpieEv>
-    if (running -> function_body) running -> function_body(running -> arg);
-    800036bc:	0000a717          	auipc	a4,0xa
-    800036c0:	80473703          	ld	a4,-2044(a4) # 8000cec0 <_ZN3TCB7runningE>
-    800036c4:	02873783          	ld	a5,40(a4)
-    800036c8:	00078663          	beqz	a5,800036d4 <_ZN3TCB16wrapper_functionEv+0x30>
-    800036cc:	03073503          	ld	a0,48(a4)
-    800036d0:	000780e7          	jalr	a5
-    thread_exit();
-    800036d4:	00000097          	auipc	ra,0x0
-    800036d8:	f84080e7          	jalr	-124(ra) # 80003658 <_ZN3TCB11thread_exitEv>
-}
-    800036dc:	00813083          	ld	ra,8(sp)
-    800036e0:	00013403          	ld	s0,0(sp)
-    800036e4:	01010113          	addi	sp,sp,16
     800036e8:	00008067          	ret
 
 00000000800036ec <_ZN3TCBnwEm>:
@@ -3834,7 +3833,7 @@ int TCB::thread_create(thread_t *handle, void(*start_routine)(void *), void *arg
     8000378c:	000a0613          	mv	a2,s4
     80003790:	00098593          	mv	a1,s3
     80003794:	00000097          	auipc	ra,0x0
-    80003798:	c7c080e7          	jalr	-900(ra) # 80003410 <_ZN3TCBC1EPFvPvES0_S0_>
+    80003798:	cc4080e7          	jalr	-828(ra) # 80003458 <_ZN3TCBC1EPFvPvES0_S0_>
     8000379c:	0200006f          	j	800037bc <_ZN3TCB13thread_createEPPS_PFvPvES2_S2_+0x78>
     800037a0:	00050913          	mv	s2,a0
     800037a4:	00048513          	mv	a0,s1
@@ -3907,6 +3906,7 @@ bool TCB::is_finished() const {
 
 0000000080003864 <_ZN3TCB21clear_from_timed_waitEb>:
 
+/// reset state after timed wait
 void TCB::clear_from_timed_wait(bool removed_from_timer) {
     80003864:	fe010113          	addi	sp,sp,-32
     80003868:	00113c23          	sd	ra,24(sp)
