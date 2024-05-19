@@ -8,6 +8,7 @@ time_t TCB::time_slice_counter = 0;
 
 int TCB::thread_create(thread_t *handle, void(*start_routine)(void *), void *arg, void *stack_begin_address) {
     *handle = new TCB(start_routine, arg, stack_begin_address);
+    if (!*handle) return -1;
     return 0;
 }
 
