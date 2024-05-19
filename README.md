@@ -17,9 +17,9 @@
 ![image](https://github.com/ZdravDim/Multithreaded-kernel/assets/72796409/42e612bc-5c02-43bc-872d-9297d6f3eae8)
 
 
-- The ABI (application binary interface) is a system call interface that is performed using a software interrupt of the target processor. This layer ensures the passing of system call's arguments through processor registers, switching to the processor's privileged operating mode and moving to kernel code.
+- **The ABI** (_application binary interface_) is a system call interface that is performed using a software interrupt of the target processor. This layer ensures the passing of system call's arguments through processor registers, switching to the processor's privileged operating mode and moving to kernel code.
 
-- C API (application programming interface) is classic, procedural system call programming interface implemented as a set of functions.
+- **C API** (_application programming interface_) is classic, procedural system call programming interface implemented as a set of functions.
 
 | C API interface |
 | ----------------------------------------------------------------------------- |
@@ -38,7 +38,7 @@
 | char getc ();                                                                 |
 | void putc (char);                                                             |
 
-- The C++ API is an object-oriented API that provides an object-oriented view of the concepts supported by the kernel. It is implemented as a simple object-oriented wrapper around functions from the C API layer.
+- The **C++ API** is an object-oriented API that provides an object-oriented view of the concepts supported by the kernel. It is implemented as a simple object-oriented wrapper around functions from the C API layer.
 
 ```
 void* operator new (size_t);
