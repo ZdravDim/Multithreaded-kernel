@@ -74,12 +74,12 @@ int main() {
     thread_create(&threads[1], kernelConsoleOutput, nullptr);
 
     /// Test Periodic Thread
-//    PeriodicThread *periodic = new PeriodicWorker();
-//    periodic -> start();
+    PeriodicThread *periodic = new PeriodicWorker();
+    periodic -> start();
 
     /// Test Everything
     thread_create(&threads[2], userMainWrapper, nullptr);
-    while (true) thread_dispatch();
+    while (!threads[2] -> is_finished()) thread_dispatch();
 
     return 0;
 }

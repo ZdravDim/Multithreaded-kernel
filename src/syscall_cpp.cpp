@@ -70,7 +70,7 @@ int Semaphore::tryWait() {
 }
 
 void PeriodicThread::terminate() {
-    period = 0;
+    period = (time_t) -1;
 }
 
 PeriodicThread::PeriodicThread(time_t period) : Thread() {
@@ -78,7 +78,7 @@ PeriodicThread::PeriodicThread(time_t period) : Thread() {
 }
 
 void PeriodicThread::run() {
-    while (period) {
+    while (period != (time_t) -1) {
         periodicActivation();
         time_sleep(period);
     }
