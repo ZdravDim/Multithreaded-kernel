@@ -40,6 +40,23 @@ void userMainWrapper(void *args) {
     userMain();
 }
 
+sem_t sem;
+
+void workerA(void*) {
+    while (true) {
+        putc('A');
+        sem_timedwait(sem, 10);
+    }
+}
+
+void workerB(void*) {
+    while (true) {
+        putc('B');
+        time_sleep(5);
+    }
+}
+
+
 /// Class for testing periodic thread
 class PeriodicWorker : public PeriodicThread {
 public:
@@ -74,12 +91,12 @@ int main() {
     thread_create(&threads[1], kernelConsoleOutput, nullptr);
 
     /// Test Periodic Thread
-    PeriodicThread *periodic = new PeriodicWorker();
-    periodic -> start();
+//    PeriodicThread *periodic = new PeriodicWorker();
+//    periodic -> start();
 
     /// Test Everything
     thread_create(&threads[2], userMainWrapper, nullptr);
-    while (!threads[2] -> is_finished()) thread_dispatch();
+    while (!threads[2] -> is_finished() || !Con::isOutputBufferEmpty()) thread_dispatch();
 
     return 0;
 }

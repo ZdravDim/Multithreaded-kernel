@@ -10,6 +10,7 @@ public:
     static char getc_output();
     static void putc_input(char c);
     static char getc_input();
+    static bool isOutputBufferEmpty();
 
 private:
     static bool initialized;

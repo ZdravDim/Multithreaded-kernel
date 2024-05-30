@@ -15,6 +15,7 @@ public:
 
     void putc(char c);
     char getc();
+    bool isEmpty();
 
     void* operator new (size_t size);
     void operator delete(void* addr);

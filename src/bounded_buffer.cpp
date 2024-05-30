@@ -32,3 +32,7 @@ char BoundedBuffer::getc() {
     Sem::signal(space_available);
     return c;
 }
+
+bool BoundedBuffer::isEmpty() {
+    return head == tail;
+}

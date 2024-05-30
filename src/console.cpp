@@ -27,3 +27,7 @@ void Con::putc_input(char c) {
 char Con::getc_input() {
     return input_buffer -> getc();
 }
+
+bool Con::isOutputBufferEmpty() {
+    return output_buffer -> isEmpty();
+}
