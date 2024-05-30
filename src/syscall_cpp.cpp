@@ -74,7 +74,7 @@ void PeriodicThread::terminate() {
 }
 
 PeriodicThread::PeriodicThread(time_t period) : Thread() {
-    this -> period = (period <= 0) ? DEFAULT_TIME_SLICE : period;
+    this -> period = period;
 }
 
 void PeriodicThread::run() {
