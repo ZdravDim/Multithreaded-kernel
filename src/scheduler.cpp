@@ -27,7 +27,7 @@ TCB* Scheduler::get() {
 
 /// put thread to sleeping list
 int Scheduler::put_to_sleep(time_t time) {
-    if (!time) return -1;
+    if (time <= 0) return -1;
     TCB* thread = TCB::running;
     /// empty list case
     if (!head_sleeping) {
