@@ -17,6 +17,7 @@ int Sem::close(Sem *handle) {
     return 0;
 }
 
+/// block running thread
 void Sem::block() {
     TCB* old = TCB::running;
     old -> sem = this;
@@ -26,6 +27,7 @@ void Sem::block() {
     TCB::yield(old, TCB::running);
 }
 
+/// unblock one thread from blocked list
 void Sem::unblock() {
     TCB* thread = blocked_threads -> remove_first();
     if (thread -> timed_wait) Scheduler::remove_from_sleep(thread);

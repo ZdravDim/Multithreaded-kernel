@@ -1,13 +1,16 @@
 #include "../h/thread_list.hpp"
 
+/// append the list
 void ThreadList::push_back(TCB *thread) {
     tail = (head ? tail -> next : head) = new Node(thread);
 }
 
+/// get first element
 TCB *ThreadList::get_first() {
     return (head ? head -> data : nullptr);
 }
 
+/// remove first element
 TCB *ThreadList::remove_first() {
     if (!head) return nullptr;
     Node* tmp = head;
@@ -18,6 +21,7 @@ TCB *ThreadList::remove_first() {
     return thread;
 }
 
+/// remove element `thread` is pointing to
 int ThreadList::remove(TCB *thread) {
     if (!thread) return -1;
     Node *tmp = head, *prev = nullptr;
@@ -31,6 +35,7 @@ int ThreadList::remove(TCB *thread) {
     return 0;
 }
 
+/// free the list
 void ThreadList::free() {
     while (get_first()) remove_first();
 }

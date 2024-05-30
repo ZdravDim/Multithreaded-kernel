@@ -41,7 +41,7 @@ public:
 protected:
     PeriodicThread (time_t period);
 
-    [[noreturn]] virtual void run() override;
+    virtual void run() override;
     virtual void periodicActivation () {}
 private:
     time_t period;

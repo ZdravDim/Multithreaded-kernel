@@ -47,7 +47,7 @@ public:
     TCB* get_next_sleeping() const;
     void set_next_sleeping(TCB* next);
 
-    static TCB* running; /// running thread
+    static TCB* running; /// currently running thread
 
 private:
     TCB(void (*function_body)(void*), void *arg, void *stack);

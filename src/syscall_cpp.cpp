@@ -70,16 +70,15 @@ int Semaphore::tryWait() {
 }
 
 void PeriodicThread::terminate() {
-    thread_exit();
+    period = 0;
 }
 
 PeriodicThread::PeriodicThread(time_t period) : Thread() {
-    if (period <= 0) this -> period = DEFAULT_TIME_SLICE;
-    else this -> period = period;
+    this -> period = (period <= 0) ? DEFAULT_TIME_SLICE : period;
 }
 
-[[noreturn]] void PeriodicThread::run() {
-    while (true) {
+void PeriodicThread::run() {
+    while (period) {
         periodicActivation();
         time_sleep(period);
     }

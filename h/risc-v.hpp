@@ -7,7 +7,6 @@
 
 class RiscV {
 public:
-    /// pop Spp and Spie bits (has to be a non inline function)
     static void popSppSpie();
     /// asm function, push all registers to stack
     static void push_registers();

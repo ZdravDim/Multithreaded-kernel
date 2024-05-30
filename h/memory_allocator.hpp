@@ -20,7 +20,9 @@ public:
     static void* mem_alloc(size_t size);
     static int mem_free(void* addr);
     static size_t get_number_of_blocks(size_t size);
+    /// helper function for debugging
     static void print();
+
 private:
     MemoryAllocator() = default;
     static void removeNode(MemSeg *toRemove, MemSeg *nextSeg, bool newIsCreated, bool free_list);

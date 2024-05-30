@@ -5,6 +5,7 @@ TCB* Scheduler::head_ready = nullptr;
 TCB* Scheduler::tail_ready = nullptr;
 TCB* Scheduler::head_sleeping = nullptr;
 
+/// place thread in scheduler
 void Scheduler::put(TCB *thread) {
     if (tail_ready) {
         tail_ready -> set_next_ready(thread);
@@ -14,6 +15,7 @@ void Scheduler::put(TCB *thread) {
     thread -> set_next_ready(nullptr);
 }
 
+/// retrieve thread from scheduler
 TCB* Scheduler::get() {
     if (!head_ready) return nullptr;
     TCB *tmp = head_ready;

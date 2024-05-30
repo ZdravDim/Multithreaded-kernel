@@ -1,4 +1,3 @@
-#include "../lib/console.h"
 #include "../h/memory_allocator.hpp"
 #include "../h/risc-v.hpp"
 #include "../h/syscall_cpp.hpp"
@@ -41,6 +40,7 @@ void userMainWrapper(void *args) {
     userMain();
 }
 
+/// Class for testing periodic thread
 class PeriodicWorker : public PeriodicThread {
 public:
     int value = 10;
@@ -52,17 +52,6 @@ public:
         if (value < 0) terminate();
     }
 };
-
-[[noreturn]] void tester(void*) {
-    while (true) {
-        char c1 = getc();
-        char c2 = getc();
-        char c3 = getc();
-        putc(c1);
-        putc(c2);
-        putc(c3);
-    }
-}
 
 int main() {
     /// Set interrupt routine handler
@@ -85,9 +74,9 @@ int main() {
     thread_create(&threads[1], kernelConsoleOutput, nullptr);
 
     /// Test Periodic Thread
-//    Thread *periodic = new PeriodicWorker();
+//    PeriodicThread *periodic = new PeriodicWorker();
 //    periodic -> start();
-//    thread_create(&threads[2], tester, nullptr);
+
     /// Test Everything
     thread_create(&threads[2], userMainWrapper, nullptr);
     while (true) thread_dispatch();
