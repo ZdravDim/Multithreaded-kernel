@@ -40,23 +40,6 @@ void userMainWrapper(void *args) {
     userMain();
 }
 
-sem_t sem;
-
-void workerA(void*) {
-    while (true) {
-        putc('A');
-        sem_timedwait(sem, 10);
-    }
-}
-
-void workerB(void*) {
-    while (true) {
-        putc('B');
-        time_sleep(5);
-    }
-}
-
-
 /// Class for testing periodic thread
 class PeriodicWorker : public PeriodicThread {
 public:
