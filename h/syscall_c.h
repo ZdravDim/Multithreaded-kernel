@@ -20,7 +20,8 @@ enum SYSCALL_CODES {
     SEM_TRYWAIT = 0x26,
     TIME_SLEEP = 0x31,
     GETC = 0x41,
-    PUTC = 0x42
+    PUTC = 0x42,
+    GET_THREAD_ID = 0x99
 };
 
 void* mem_alloc (size_t size);
@@ -54,5 +55,7 @@ const int EOF = -1;
 char getc ();
 
 void putc (char);
+
+int get_thread_id();
 
 #endif

@@ -30,7 +30,7 @@ void Sem::block() {
 /// unblock one thread from blocked list
 void Sem::unblock() {
     TCB* thread = blocked_threads -> remove_first();
-    if (thread -> timed_wait) Scheduler::remove_from_sleep(thread);
+    Scheduler::remove_from_sleep(thread);
     thread -> clear_from_timed_wait(false);
     thread -> status = TCB::RUNNABLE;
     Scheduler::put(thread);
@@ -54,11 +54,12 @@ int Sem::signal(Sem *handle) {
 int Sem::timedWait(Sem *handle, time_t time) {
     TCB *thread = TCB::running;
     thread -> timed_wait = true;
-    Scheduler::put_to_sleep(time);
+    Scheduler::put_to_sleep(time, false);
     int status = wait(handle);
     /// remove from sleeping list in case wait executed without blocking (unblock didn't remove it)
     Scheduler::remove_from_sleep(thread);
     thread -> clear_from_timed_wait(false);
+    if (thread -> time_to_sleep == 0) return -2;
     return status;
 }
 

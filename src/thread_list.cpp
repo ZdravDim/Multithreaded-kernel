@@ -31,7 +31,7 @@ int ThreadList::remove(TCB *thread) {
     }
     if (!tmp) return -2;
     if (prev) prev -> next = tmp -> next;
-    else head = tmp;
+    else head = tmp -> next;
     return 0;
 }
 

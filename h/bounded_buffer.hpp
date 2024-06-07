@@ -4,7 +4,7 @@
 #include "../lib/hw.h"
 #include "memory_allocator.hpp"
 #include "semaphore.hpp"
-#include "syscall_c.hpp"
+#include "syscall_c.h"
 
 #define CAPACITY 500
 
@@ -16,6 +16,7 @@ public:
     void putc(char c);
     char getc();
     bool isEmpty();
+    bool isFull();
 
     void* operator new (size_t size);
     void operator delete(void* addr);

@@ -1,5 +1,4 @@
-#include "bounded_buffer.hpp"
-
+#include "buffer.hpp"
 
 Buffer::Buffer(int _cap) : cap(_cap + 1), head(0), tail(0) {
     buffer = (int *)mem_alloc(sizeof(int) * cap);

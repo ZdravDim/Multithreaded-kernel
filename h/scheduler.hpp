@@ -12,7 +12,7 @@ class Scheduler {
 public:
     static void put(TCB* thread);
     static TCB* get();
-    static int put_to_sleep(time_t time);
+    static int put_to_sleep(time_t time, bool execute_yield);
     static int remove_from_sleep(TCB* thread);
 
     Scheduler(Scheduler &) = delete;

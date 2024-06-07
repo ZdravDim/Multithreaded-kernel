@@ -1,4 +1,4 @@
-#include "../h/syscall_c.hpp"
+#include "../h/syscall_c.h"
 
 #include "printing.hpp"
 
@@ -8,6 +8,7 @@ static void sleepyRun(void *arg) {
     time_t sleep_time = *((time_t *) arg);
     int i = 6;
     while (--i > 0) {
+
         printString("Hello ");
         printInt(sleep_time);
         printString(" !\n");

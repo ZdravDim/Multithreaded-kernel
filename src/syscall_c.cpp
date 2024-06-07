@@ -1,4 +1,4 @@
-#include "../h/syscall_c.hpp"
+#include "../h/syscall_c.h"
 
 void syscall(uint64 syscall_code, uint64 a1 = 0, uint64 a2 = 0, uint64 a3 = 0, uint64 a4 = 0) {
     __asm__ volatile("ecall");
@@ -99,4 +99,11 @@ char getc () {
 
 void putc (char c) {
     syscall(PUTC, (uint64) c);
+}
+
+int get_thread_id() {
+    int volatile thread_id;
+    syscall(GET_THREAD_ID);
+    __asm__ volatile("mv %0, a0" : "=r"(thread_id));
+    return thread_id;
 }

@@ -73,13 +73,16 @@ void RiscV::handle_supervisor_trap() {
                 Sem::tryWait((sem_t) a1);
                 break;
             case TIME_SLEEP:
-                Scheduler::put_to_sleep((time_t) a1);
+                Scheduler::put_to_sleep((time_t) a1, (bool) true);
                 break;
             case GETC:
                 Con::getc_input();
                 break;
             case PUTC:
                 Con::putc_output((char) a1);
+                break;
+            case GET_THREAD_ID:
+                TCB::getID();
                 break;
             default:
                 break;
@@ -98,7 +101,7 @@ void RiscV::handle_supervisor_trap() {
         if (first_waiting) {
             --first_waiting -> time_to_sleep;
             while (first_waiting && first_waiting -> time_to_sleep == 0) {
-                if (first_waiting -> timed_wait) first_waiting -> clear_from_timed_wait(true);
+                if (first_waiting -> timed_wait || first_waiting -> status == TCB::BLOCKED) first_waiting -> clear_from_timed_wait(true);
                 Scheduler::put(first_waiting);
                 first_waiting -> status = TCB::RUNNABLE;
                 TCB* tmp = first_waiting;
@@ -128,7 +131,7 @@ void RiscV::handle_supervisor_trap() {
         int irq = plic_claim();
         if (irq == CONSOLE_IRQ) {
             /// Maybe add constraint, limit nubmer of input chars to read
-            while (*(char *) CONSOLE_STATUS & CONSOLE_RX_STATUS_BIT) {
+            while (!Con::isOutputBufferFull() && *(char *) CONSOLE_STATUS & CONSOLE_RX_STATUS_BIT) {
                 char c = *(char *) CONSOLE_RX_DATA;
                 Con::putc_input(c);
             }
@@ -141,11 +144,8 @@ void RiscV::handle_supervisor_trap() {
 
     /// Illegal instruction / Bad memory access
     else {
-        printNumber(scause);
         putc('!');
         putc('?');
         putc('!');
-        uint64 val = 1;
-        __asm__ volatile("mv a0, %0" : : "r"(val));
     }
 }

@@ -16,6 +16,7 @@ class TCB {
     friend class RiscV;
     friend class Sem;
     friend class Scheduler;
+    friend class ThreadList;
 
 public:
     struct Context {
@@ -31,6 +32,8 @@ public:
     static void dispatch();
     static void yield(TCB* old_running, TCB* new_running);
     static void context_switch(Context* old_context, Context* new_context);
+
+    static int getID();
 
     void* operator new(size_t size);
     void operator delete(void* addr);

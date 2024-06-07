@@ -22,7 +22,7 @@ public:
     void run() override {
         int key;
         int i = 0;
-        while ((key = getc()) != 0x31) {
+        while ((key = getc()) != 0x1b) {
             td->buffer->put(key);
             i++;
         }

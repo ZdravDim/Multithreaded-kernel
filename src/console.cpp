@@ -31,3 +31,7 @@ char Con::getc_input() {
 bool Con::isOutputBufferEmpty() {
     return output_buffer -> isEmpty();
 }
+
+bool Con::isOutputBufferFull() {
+    return output_buffer -> isFull();
+}

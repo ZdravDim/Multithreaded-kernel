@@ -1,5 +1,5 @@
 
-#include "../h/syscall_c.hpp"
+#include "../h/syscall_c.h"
 #include "Threads_C_API_test.hpp"
 
 #include "printing.hpp"
@@ -62,7 +62,7 @@ static void workerBodyC(void* arg) {
         printString("C: i="); printInt(i); printString("\n");
     }
 
-    printString("C finished!\n");
+    printString("A finished!\n");
     finishedC = true;
     thread_dispatch();
 }

@@ -1,4 +1,4 @@
-#include "../h/bounded_bufffer.hpp"
+#include "../h/bounded_buffer.hpp"
 
 BoundedBuffer::BoundedBuffer() {
     Sem::open(&item_available, 0);
@@ -35,4 +35,8 @@ char BoundedBuffer::getc() {
 
 bool BoundedBuffer::isEmpty() {
     return head == tail;
+}
+
+bool BoundedBuffer::isFull() {
+    return head == (tail + 1) % CAPACITY;
 }

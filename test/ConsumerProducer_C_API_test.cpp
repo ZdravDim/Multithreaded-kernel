@@ -1,7 +1,7 @@
 
-#include "../h/syscall_c.hpp"
+#include "../h/syscall_c.h"
 
-#include "bounded_buffer.hpp"
+#include "buffer.hpp"
 
 static sem_t waitForAll;
 
@@ -18,7 +18,7 @@ static void producerKeyboard(void *arg) {
 
     int key;
     int i = 0;
-    while ((key = getc()) != 0x31) {
+    while ((key = getc()) != 0x1b) {
         data->buffer->put(key);
         i++;
 

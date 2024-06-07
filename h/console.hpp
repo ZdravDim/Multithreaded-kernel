@@ -1,7 +1,7 @@
 #ifndef define_console
 #define define_console
 
-#include "bounded_bufffer.hpp"
+#include "bounded_buffer.hpp"
 
 class Con {
 public:
@@ -11,6 +11,7 @@ public:
     static void putc_input(char c);
     static char getc_input();
     static bool isOutputBufferEmpty();
+    static bool isOutputBufferFull();
 
 private:
     static bool initialized;

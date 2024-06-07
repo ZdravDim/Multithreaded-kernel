@@ -2,7 +2,7 @@
 #include "../h/scheduler.hpp"
 #include "../h/risc-v.hpp"
 
-int TCB::cnt = 0;
+int TCB::cnt = 10;
 TCB* TCB::running = nullptr;
 time_t TCB::time_slice_counter = 0;
 
@@ -116,4 +116,9 @@ void TCB::clear_from_timed_wait(bool removed_from_timer) {
     }
     timed_wait = false;
     sem = nullptr;
+}
+
+int TCB::getID() {
+    dispatch();
+    return running -> id;
 }

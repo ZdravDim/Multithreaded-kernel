@@ -1,27 +1,8 @@
 #include "../h/memory_allocator.hpp"
 #include "../h/risc-v.hpp"
 #include "../h/syscall_cpp.hpp"
+#include "../test/printing.hpp"
 
-/// helper function
-void printNumber(uint64 num) {
-    putc('\n');
-    putc('N');
-    putc(':');
-    putc(' ');
-    if (!num) putc('0');
-    uint64 num2 = 0, zero_count = 0;
-    while (num) {
-        num2 *= 10;
-        num2 += num % 10;
-        if (!num2) ++zero_count;
-        num /= 10;
-    }
-    while (num2) {
-        putc(num2 % 10 + '0');
-        num2 /= 10;
-    }
-    while (zero_count--) putc('0');
-}
 /// kernel thread used for sending chars to console controller
 void kernelConsoleOutput(void *args) {
     while (true) {
@@ -36,22 +17,35 @@ void kernelConsoleOutput(void *args) {
 }
 
 void userMain();
-void userMainWrapper(void *args) {
+void userWrapper(void *args) {
     userMain();
 }
 
-/// Class for testing periodic thread
-class PeriodicWorker : public PeriodicThread {
-public:
-    int value = 10;
+sem_t sem;
 
-    explicit PeriodicWorker() : PeriodicThread(4) {}
-
-    void periodicActivation() override {
-        printNumber(value--);
-        if (value < 0) terminate();
+void worker(void*) {
+    int i = 3;
+    while (i > 0) {
+        int id = get_thread_id();
+        int status = sem_timedwait(sem, id);
+        if (status == 0) {
+            printString("\nUSAO ");
+            printInt(id);
+            time_sleep(id);
+            printString("\nIZASAO ");
+            printInt(id);
+            sem_signal(sem);
+            --i;
+        }
+        else if (status == -2) {
+            printString("\nCEKAO ");
+            printInt(id);
+        }
+        thread_dispatch();
     }
-};
+}
+
+thread_t threads[12];
 
 int main() {
     /// Set interrupt routine handler
@@ -60,8 +54,6 @@ int main() {
     /// Initialization
     MemoryAllocator::initialize();
     Con::initialize();
-
-    thread_t threads[3];
 
     /// Main Thread
     thread_create(&threads[0], nullptr, nullptr);
@@ -73,13 +65,10 @@ int main() {
     /// Kernel Thread for console output
     thread_create(&threads[1], kernelConsoleOutput, nullptr);
 
-    /// Test Periodic Thread
-//    PeriodicThread *periodic = new PeriodicWorker();
-//    periodic -> start();
+    sem_open(&sem, 1);
+    for (int i = 2; i < 5; ++i) thread_create(&threads[i], worker, nullptr);
 
-    /// Test Everything
-    thread_create(&threads[2], userMainWrapper, nullptr);
-    while (!threads[2] -> is_finished() || !Con::isOutputBufferEmpty()) thread_dispatch();
+    while (true) thread_dispatch();
 
     return 0;
 }

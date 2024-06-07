@@ -120,21 +120,21 @@ void MemoryAllocator::tryToJoin(MemSeg *seg) {
 }
 
 void MemoryAllocator::print() {
-    putc('\n');
-    putc('M');
-    putc(':');
-    putc(' ');
-    for (MemSeg* tmp = freeSegHead; tmp; tmp = tmp -> next) {
-        printNumber(tmp -> size);
-        putc(' ');
-        putc('f');
-    }
-    putc('\t');
-    for (MemSeg* tmp = usedSegHead; tmp; tmp = tmp -> next) {
-        printNumber(tmp -> size);
-        putc(' ');
-        putc('u');
-    }
+//    putc('\n');
+//    putc('M');
+//    putc(':');
+//    putc(' ');
+//    for (MemSeg* tmp = freeSegHead; tmp; tmp = tmp -> next) {
+//        printNumber(tmp -> size);
+//        putc(' ');
+//        putc('f');
+//    }
+//    putc('\t');
+//    for (MemSeg* tmp = usedSegHead; tmp; tmp = tmp -> next) {
+//        printNumber(tmp -> size);
+//        putc(' ');
+//        putc('u');
+//    }
 }
 
 size_t MemoryAllocator::get_number_of_blocks(size_t size) {
