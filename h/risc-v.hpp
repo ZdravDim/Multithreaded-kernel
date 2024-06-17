@@ -5,6 +5,8 @@
 #include "../h/memory_allocator.hpp"
 #include "../h/console.hpp"
 
+#include "../test/printing.hpp"
+
 class RiscV {
 public:
     static void popSppSpie();

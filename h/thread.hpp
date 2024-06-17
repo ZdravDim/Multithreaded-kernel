@@ -52,6 +52,7 @@ public:
 
     static TCB* running; /// currently running thread
 
+    int id; /// thread identification
 private:
     TCB(void (*function_body)(void*), void *arg, void *stack);
 
@@ -61,7 +62,7 @@ private:
     static time_t time_slice_counter; /// time spent on currently running thread
     time_t time_slice; /// time given for executing (currently equal for every thread)
 
-    int id; /// thread identification
+
     Context context; /// current thread context
     Status status; /// thread status
     void (*function_body)(void*); /// thread function to execute

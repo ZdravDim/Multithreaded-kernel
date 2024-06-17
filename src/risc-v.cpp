@@ -20,7 +20,7 @@ void RiscV::popSppSpie() {
 /// interrupt handler
 void RiscV::handle_supervisor_trap() {
     /// read values from registers
-    uint64 syscall_code, a1, a2, a3, a4;
+    volatile uint64 syscall_code, a1, a2, a3, a4;
     __asm__ volatile("mv %0, a0" : "=r"(syscall_code));
     __asm__ volatile("mv %0, a1" : "=r"(a1));
     __asm__ volatile("mv %0, a2" : "=r"(a2));
@@ -94,6 +94,8 @@ void RiscV::handle_supervisor_trap() {
 
     /// interrupt caused by Timer
     else if (scause == SOFTWARE_INTERRUPT) {
+        volatile uint64 a0;
+        __asm__ volatile ("mv %0, a0" : "=r"(a0));
         /// set SSIP bit to 0 (interrupt finished)
         mc_sip(SIP_SSIP);
         /// wake up threads who slept
@@ -122,10 +124,13 @@ void RiscV::handle_supervisor_trap() {
             write_sstatus(sstatus);
             write_sepc(sepc);
         }
+        __asm__ volatile ("mv a0, %0" : : "r"(a0));
     }
 
     /// External interrupt (Console)
     else if (scause == HARDWARE_INTERRUPT) {
+        volatile uint64 a0;
+        __asm__ volatile ("mv %0, a0" : "=r"(a0));
         uint64 sepc = read_sepc();
         uint64 sstatus = read_sstatus();
         int irq = plic_claim();
@@ -140,6 +145,7 @@ void RiscV::handle_supervisor_trap() {
         write_sepc(sepc);
         write_sstatus(sstatus);
         mc_sip(SIP_SEIP);
+        __asm__ volatile ("mv a0, %0" : : "r"(a0));
     }
 
     /// Illegal instruction / Bad memory access

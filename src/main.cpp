@@ -66,9 +66,17 @@ int main() {
     thread_create(&threads[1], kernelConsoleOutput, nullptr);
 
     sem_open(&sem, 1);
-    for (int i = 2; i < 5; ++i) thread_create(&threads[i], worker, nullptr);
+    for (int i = 2; i < 12; ++i) thread_create(&threads[i], worker, nullptr);
 
-    while (true) thread_dispatch();
+    while (true) {
+        bool flag = false;
+        for (int i = 2; i < 12; ++i) if (!threads[i] -> is_finished()) {
+            thread_dispatch();
+            flag = true;
+        }
+        if (!flag) break;
+    }
+    while (!Con::isOutputBufferEmpty()) thread_dispatch();
 
     return 0;
 }

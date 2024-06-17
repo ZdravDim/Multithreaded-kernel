@@ -16,6 +16,7 @@ TCB *ThreadList::remove_first() {
     Node* tmp = head;
     TCB* thread = tmp -> data;
     head = head -> next;
+    if (!head) tail = nullptr;
     tmp -> next = nullptr;
     delete tmp;
     return thread;
@@ -32,6 +33,7 @@ int ThreadList::remove(TCB *thread) {
     if (!tmp) return -2;
     if (prev) prev -> next = tmp -> next;
     else head = tmp -> next;
+    if (!head) tail = nullptr;
     return 0;
 }
 

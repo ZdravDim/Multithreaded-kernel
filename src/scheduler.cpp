@@ -86,6 +86,7 @@ int Scheduler::remove_from_sleep(TCB *thread) {
 void Scheduler::change_thread() {
     TCB* old = TCB::running;
     old -> set_status(TCB::SLEEPING);
+    if (old -> timed_wait) old -> set_status(TCB::BLOCKED);
     if (!old-> timed_wait) {
         TCB::running = Scheduler::get();
         if (old != TCB::running) TCB::yield(old, TCB::running);

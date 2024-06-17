@@ -103,6 +103,7 @@ void putc (char c) {
 
 int get_thread_id() {
     int volatile thread_id;
+//    thread_dispatch();
     syscall(GET_THREAD_ID);
     __asm__ volatile("mv %0, a0" : "=r"(thread_id));
     return thread_id;

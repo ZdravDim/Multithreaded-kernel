@@ -1,4 +1,5 @@
 #include "../h/semaphore.hpp"
+#include "../h/console.hpp"
 
 Sem::Sem(unsigned int init) : value((int) init) {
     blocked_threads = new ThreadList();
@@ -30,7 +31,8 @@ void Sem::block() {
 /// unblock one thread from blocked list
 void Sem::unblock() {
     TCB* thread = blocked_threads -> remove_first();
-    Scheduler::remove_from_sleep(thread);
+    int STATUS = Scheduler::remove_from_sleep(thread);
+    if (STATUS == -1) putc('!');
     thread -> clear_from_timed_wait(false);
     thread -> status = TCB::RUNNABLE;
     Scheduler::put(thread);
@@ -57,9 +59,11 @@ int Sem::timedWait(Sem *handle, time_t time) {
     Scheduler::put_to_sleep(time, false);
     int status = wait(handle);
     /// remove from sleeping list in case wait executed without blocking (unblock didn't remove it)
-    Scheduler::remove_from_sleep(thread);
+    int STATUS = Scheduler::remove_from_sleep(thread);
+    if (STATUS == -1) putc('?');
     thread -> clear_from_timed_wait(false);
     if (thread -> time_to_sleep == 0) return -2;
+    thread -> set_time_to_sleep(0);
     return status;
 }
 
